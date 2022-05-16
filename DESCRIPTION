@@ -5,13 +5,14 @@ Version: 0.0.1
 Author: Masayuki Ushio
 Maintainer: Masayuki Ushio <ong8181@gmail.com>
 Description: This package contains a collection of miscellaneous functions for ecology.
-    The functions would be useful for ecology studies.
+    The functions would be useful for ecological studies.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports: 
+    Biostrings,
     dplyr,
     ggplot2,
     iNEXT,
@@ -20,6 +21,7 @@ Imports:
     phyloseq,
     purrr,
     rstudioapi,
+    ShortRead,
     stringr,
     utils,
     vegan
