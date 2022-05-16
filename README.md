@@ -17,10 +17,10 @@ remotes::install_github("ong8181/macam")
 
 ## Functions
 ### File/directory handling
-`outdir_create()`: Generate output directory.
-`save_workspace()`: Save workspace.
-`save_session_info()`: Save session information.
+- `outdir_create()`: Generate output directory.
+- `save_workspace()`: Save workspace.
+- `save_session_info()`: Save session information.
 
 ### Sequence analysis
-`rarefy_even_coverage()`: Perform coverage-based rarefaction.
-`plot_rarefy()`: Visualize results of coverage-based rarefaction.
+- `rarefy_even_coverage()`: Perform coverage-based rarefaction.
+- `plot_rarefy()`: Visualize results of coverage-based rarefaction.
