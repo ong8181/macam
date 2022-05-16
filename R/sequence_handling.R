@@ -15,10 +15,6 @@
 #' @export
 #' @examples
 #' # rarefy_even_coverage(ps_obj, coverage = 0.97)
-
-# ---------------------------------------------- #
-# Coverage-based rarefaction: iNEXT version
-# ---------------------------------------------- #
 rarefy_even_coverage <-  function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
@@ -192,10 +188,6 @@ rarefy_even_coverage <-  function(ps_obj,
 #' @export
 #' @examples
 #' # plot_rarefy(ps_obj)
-
-# ---------------------------------------------- #
-# Visualize rarefaction curve: iNEXT version
-# ---------------------------------------------- #
 plot_rarefy <- function (ps_obj,
                          plot_rarefied_point = TRUE,
                          #se = FALSE,
