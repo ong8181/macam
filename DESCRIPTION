@@ -33,3 +33,7 @@ Imports:
     vegan
 LinkingTo: 
     Rcpp
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

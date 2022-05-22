@@ -1,0 +1,46 @@
+---
+title: "macam: A collection of miscellaneous functions for ecology in R"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{macam}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Installation
+```{r setup}
+#install.packages("remotes")
+remotes::install_github("ong8181/macam")
+```
+
+# Load library
+```{r setup}
+library(macam)
+```
+
+# Quick tutrials
+## File/directory handling
+### `outdir_create()`
+### `save_workspace()`
+### `save_session_info()`
+
+## Sequence analysis
+### `AllOrients()`
+### `PrimerHits()`
+### `rarefy_even_coverage()`
+### `plot_rarefy()`
+### `taxa_name_summarize()`
+
+## Time series analysis
+### `s_map_rgl()`
+### `twin_surrogate_cpp()`
+
+## ggplot2 functions
+### `s_map_rgl()`

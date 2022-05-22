@@ -16,7 +16,7 @@ remotes::install_github("ong8181/macam")
 ```
 
 ## Functions
-Type `?macam::xxxxx()` for detail.
+Type `?macam::xxxxx()` for detail. Also check `browseVignette("macam")`.
 
 ### File/directory handling
 - `outdir_create()`: Create output directory.
