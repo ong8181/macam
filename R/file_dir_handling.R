@@ -51,7 +51,9 @@ save_session_info <- function(session_info_dir = "00_SessionInfo", create_sessio
   # Create session_info_dir if it does not exists
   if (!dir.exists(session_info_dir) & create_session_info_dir) {
     dir.create(session_info_dir)
-  } else {
+  } else if (dir.exists(session_info_dir) & create_session_info_dir) {
+    message("session_info_dir already exist. The directory was NOT overwrited.")
+  } else if (!dir.exists(session_info_dir) & !create_session_info_dir){
     stop("session_info_dir does not exist. Please create it.")
   }
   # Save session information
