@@ -86,13 +86,13 @@ extended_smap <- function(vectors,
             # make prediction
             fit <- glmnet::cv.glmnet(A, B, weights = c_ws, type.measure = "mae", alpha = alpha, family = "gaussian", nfolds = 10,
                              parallel = glmnet_parallel, intercept = TRUE)
-            pred_val <- stats::predict(fit, s = fit$lambda.1se, newx = matrix(c(vectors[p,], 1), nrow = 1))
-            smap_coefficient_val <- matrix(t(stats::coef(fit, s = fit$lambda.1se)), nrow = 1)[c(2, 1)]
+            pred_val <- glmnet::predict(fit, s = fit$lambda.1se, newx = matrix(c(vectors[p,], 1), nrow = 1))
+            smap_coefficient_val <- matrix(t(glmnet::coef(fit, s = fit$lambda.1se)), nrow = 1)[c(2, 1)]
           }else{
             # make prediction
             fit <- glmnet::glmnet(A, B, weights = c_ws, alpha = alpha, family = "gaussian", lambda = lambda, intercept = TRUE)
-            pred_val <- stats::predict(fit, s = fit$lambda, newx = matrix(c(vectors[p,], 1), nrow = 1))
-            smap_coefficient_val <- matrix(t(stats::coef(fit, s = fit$lambda)), nrow = 1)[c(2, 1)]
+            pred_val <- glmnet::predict(fit, s = fit$lambda, newx = matrix(c(vectors[p,], 1), nrow = 1))
+            smap_coefficient_val <- matrix(t(glmnet::coef(fit, s = fit$lambda)), nrow = 1)[c(2, 1)]
           }
         } else {
           A <- cbind(vectors[libs,])
@@ -101,13 +101,13 @@ extended_smap <- function(vectors,
             # make prediction
             fit <- glmnet::cv.glmnet(A, B, weights = c_ws, type.measure = "mae", alpha = alpha, family = "gaussian", nfolds = 10,
                              parallel = glmnet_parallel, intercept = TRUE)
-            pred_val <- stats::predict(fit, s = fit$lambda.1se, newx = matrix(c(vectors[p,]), nrow = 1))
-            smap_coefficient_val <- matrix(t(stats::coef(fit, s = fit$lambda.1se)), nrow = 1)[c(2:(NCOL(vectors) + 1), 1)]
+            pred_val <- glmnet::predict(fit, s = fit$lambda.1se, newx = matrix(c(vectors[p,]), nrow = 1))
+            smap_coefficient_val <- matrix(t(glmnet::coef(fit, s = fit$lambda.1se)), nrow = 1)[c(2:(NCOL(vectors) + 1), 1)]
           }else{
             # make prediction
             fit <- glmnet::glmnet(A, B, weights = c_ws, alpha = alpha, family = "gaussian", lambda = lambda, intercept = TRUE)
-            pred_val <- stats::predict(fit, s = fit$lambda, newx = matrix(c(vectors[p,]), nrow = 1))
-            smap_coefficient_val <- matrix(t(stats::coef(fit, s = fit$lambda)), nrow = 1)[c(2:(NCOL(vectors) + 1), 1)]
+            pred_val <- glmnet::predict(fit, s = fit$lambda, newx = matrix(c(vectors[p,]), nrow = 1))
+            smap_coefficient_val <- matrix(t(glmnet::coef(fit, s = fit$lambda)), nrow = 1)[c(2:(NCOL(vectors) + 1), 1)]
           }
         }
       } else {

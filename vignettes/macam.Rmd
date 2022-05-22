@@ -24,6 +24,8 @@ remotes::install_github("ong8181/macam", build_vignettes = TRUE, force = TRUE)
 # Load library
 ```{r, eval=FALSE}
 library(macam)
+packageVersion("macam")
+browseVignettes("macam")
 ```
 
 # Quick tutrials
@@ -50,9 +52,59 @@ save_session_info(create_session_info_dir = TRUE)
 
 ## Sequence analysis
 - `AllOrients()`
+```{r, eval=FALSE}
+AllOrients("ATGC")
+```
+
 - `PrimerHits()`
-- `rarefy_even_coverage()`
-- `plot_rarefy()`
+see [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html).
+
+- `rarefy_even_coverage()`, `plot_rarefy()`
+```{r}
+# Load library
+library(tidyverse)
+library(phyloseq)
+library(ShortRead)
+
+# Load demo data
+data(sample_sheet, asv_sheet, tax_sheet)
+# Check colnames and rownames
+dim(sample_sheet); dim(asv_sheet); dim(tax_sheet)
+all(rownames(asv_sheet) == rownames(sample_sheet))
+all(colnames(asv_sheet) == rownames(tax_sheet))
+
+# ----------------------------------------------- #
+# Import to phyloseq and data handling
+# ----------------------------------------------- #
+# Import to phyloseq
+ps_all <- phyloseq(otu_table(asv_sheet, taxa_are_rows = FALSE),
+                   sample_data(sample_sheet),
+                   tax_table(as.matrix(tax_sheet)))
+ps_sample <- ps_all %>%
+  subset_samples(sample_nc == "sample" & Site == "sea") %>%
+  prune_taxa(taxa_sums(.) > 0, .)
+sample_sums(ps_sample)
+
+# ----------------------------------------------- #
+# Perform coverage-based rarefaction
+# ----------------------------------------------- #
+set.seed(1234)
+ps_rare_raw <- rarefy_even_coverage(ps_sample,
+                                    coverage = 0.97,
+                                    knots = 100,
+                                    rarefy_average_method = "round", # Specify how iterated rarefaction results are averaged. You may change.
+                                    include_iNEXT_results = TRUE)
+ps_rare <- ps_rare_raw[[1]] # Extract phyloseq object
+sample_sums(ps_rare)
+sample_data(ps_rare)
+
+# ----------------------------------------------- #
+# Visualize rarefaction curve
+# ----------------------------------------------- #
+g1 <- plot_rarefy(ps_rare_raw) +
+  coord_cartesian(xlim = c(0, 4000))
+```
+
 - `taxa_name_summarize()`
 
 ## Time series analysis

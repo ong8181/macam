@@ -224,7 +224,7 @@ plot_rarefy <- function (ps_obj,
     # Add rarefied information
     g_rare <- g_rare +
       ggplot2::geom_point(data = rare_df2,
-                          ggplot2::aes(x = as.name("x"), y = as.name("y"), color = as.name("sample")),
+                          ggplot2::aes_string(x = "x", y = "y", color = "sample"),
                           size = 3, shape = 18) +
       ggplot2::geom_abline(slope = rare_df2_slope,
                            intercept = rare_df2_intercept,
