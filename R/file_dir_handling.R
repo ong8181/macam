@@ -49,7 +49,11 @@ save_session_info <- function(session_info_dir = "00_SessionInfo", create_sessio
   current_file_name <- rstudioapi::getSourceEditorContext()$path %>%
     basename %>% stringr::str_sub(end = - str_end)
   # Create session_info_dir if it does not exists
-  if (!dir.exists(session_info_dir) & create_session_info_dir) dir.create(session_info_dir)
+  if (!dir.exists(session_info_dir) & create_session_info_dir) {
+    dir.create(session_info_dir)
+  } else {
+    stop("session_info_dir does not exist. Please create it.")
+  }
   # Save session information
   writeLines(utils::capture.output(utils::sessionInfo()),
              paste0(session_info_dir, current_file_name, "_", substr(Sys.time(), 1, 10), ".txt"))

@@ -31,20 +31,20 @@ library(macam)
 #### `outdir_create()`
 ```{r, eval=FALSE}
 # Create output directory and save the directory name
-#output_dir <- outdir_create()
-output_dir <- "macamOut"
+output_dir <- outdir_create()
+#output_dir <- "macamOut"
 ```
 
 #### `save_workspace()`
 ```{r, eval=FALSE}
 # Save workspace in the output directory
-save_workspace()
+save_workspace(output_dir)
 ```
 
 #### `save_session_info()`
 ```{r, eval=FALSE}
-# Save session information in the output directory
-save_session_info(output_dir)
+# Save session information in 00_SessionInfo directory
+save_session_info(create_session_info_dir = TRUE)
 ```
 
 ## Sequence analysis
