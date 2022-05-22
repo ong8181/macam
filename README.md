@@ -11,12 +11,15 @@ This pacakge is a collection of miscellaneous functions for ecological studies.
 You can install the development version of macam from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("remotes")
+#install.packages("remotes")
 remotes::install_github("ong8181/macam")
+
+# Or build_vignettes = TRUE to install with vignettes
+remotes::install_github("ong8181/macam", build_vignettes = TRUE, force = TRUE)
 ```
 
 ## Functions
-Type `?macam::xxxxx()` for detail. Also check `browseVignette("macam")`.
+Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 
 ### File/directory handling
 - `outdir_create()`: Create output directory.
