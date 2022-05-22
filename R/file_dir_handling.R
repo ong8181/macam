@@ -37,17 +37,20 @@ save_workspace <- function(output_dir) {
 
 #' @title Save session information using an output directory name
 #' @description \code{save_session_info} saves session information and append date information automatically.
-#' @param output_dir Character. An output directory name. It will be used as a name of the session information text file.
 #' @param session_info_dir Character. Name of the session information directory.
 #' @param create_session_info_dir Logical. If `TRUE`, the function automatically creates an output directory for the session information
+#' @param str_end Integer. Trim `str_end` characters from the file name.
 #' @export
 #' @examples
 #' # output_dir <- outdir_create()
 #' # save_session_info(output_dir)
-save_session_info <- function(output_dir, session_info_dir = "00_SessionInfo", create_session_info_dir = FALSE) {
+save_session_info <- function(session_info_dir = "00_SessionInfo", create_session_info_dir = FALSE, str_end = 3) {
+  # Extract the running srcript file name
+  current_file_name <- rstudioapi::getSourceEditorContext()$path %>%
+    basename %>% stringr::str_sub(end = - str_end)
   # Create session_info_dir if it does not exists
   if (!dir.exists(session_info_dir) & create_session_info_dir) dir.create(session_info_dir)
   # Save session information
   writeLines(utils::capture.output(utils::sessionInfo()),
-             paste0(session_info_dir, output_dir, "_", substr(Sys.time(), 1, 10), ".txt"))
+             paste0(session_info_dir, current_file_name, "_", substr(Sys.time(), 1, 10), ".txt"))
 }

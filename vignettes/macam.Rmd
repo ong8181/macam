@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
 # Installation
 ```{r, message=FALSE, eval=FALSE}
 #install.packages("remotes")
-remotes::install_github("ong8181/macam")
+#remotes::install_github("ong8181/macam")
+remotes::install_github("ong8181/macam", build_vignettes = TRUE, force = TRUE)
 ```
 
 # Load library
@@ -27,20 +28,35 @@ library(macam)
 
 # Quick tutrials
 ## File/directory handling
-### `outdir_create()`
-### `save_workspace()`
-### `save_session_info()`
+#### `outdir_create()`
+```{r}
+# Create output directory and save the directory name
+output_dir <- outdir_create()
+# output_dir <- "macamOut"
+```
+
+#### `save_workspace()`
+```{r}
+# Save workspace in the output directory
+save_workspace(output_dir)
+```
+
+#### `save_session_info()`
+```{r}
+# Save session information in the output directory
+save_session_info()
+```
 
 ## Sequence analysis
-### `AllOrients()`
-### `PrimerHits()`
-### `rarefy_even_coverage()`
-### `plot_rarefy()`
-### `taxa_name_summarize()`
+#### `AllOrients()`
+#### `PrimerHits()`
+#### `rarefy_even_coverage()`
+#### `plot_rarefy()`
+#### `taxa_name_summarize()`
 
 ## Time series analysis
-### `s_map_rgl()`
-### `twin_surrogate_cpp()`
+#### `s_map_rgl()`
+#### `twin_surrogate_cpp()`
 
 ## ggplot2 functions
-### `s_map_rgl()`
+#### `label_to_power10()`
