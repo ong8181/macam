@@ -28,6 +28,11 @@ Type `?macam::xxxxx()` for detail.
 - `PrimerHits()`: Count the number of primer hits (from [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html))
 - `rarefy_even_coverage()`: Perform coverage-based rarefaction.
 - `plot_rarefy()`: Visualize results of coverage-based rarefaction.
+- `taxa_name_summarize()`: Summarize taxa names in phyloseq object for visualization purpose.
+
+### Time series analysis
+- `s_map_rgl()`: Perform regularized S-map in Cenci et al. (2019) _Methods in Ecology and Evolution_.
+- `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series.
 
 ### ggplot2 functions
 - `label_to_power10()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)

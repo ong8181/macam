@@ -14,16 +14,22 @@ RoxygenNote: 7.1.2
 Imports: 
     Biostrings,
     dplyr,
+    foreach,
     ggplot2,
+    glmnet,
     iNEXT,
     magrittr,
     methods,
     phyloseq,
     purrr,
+    Rcpp,
     rstudioapi,
     scales,
     ShortRead,
     stats,
     stringr,
+    tseriesChaos,
     utils,
     vegan
+LinkingTo: 
+    Rcpp
