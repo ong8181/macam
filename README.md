@@ -30,4 +30,4 @@ Type `?macam::xxxxx()` for detail.
 - `plot_rarefy()`: Visualize results of coverage-based rarefaction.
 
 ### ggplot2 functions
-- `label_to_power10()`: Convert a numeric variable to a scientific notation (e.g., $1500$ will be $1.5 \{times} 10^3$)
+- `label_to_power10()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)
