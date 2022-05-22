@@ -31,8 +31,8 @@ Type `?macam::xxxxx()` for detail.
 - `taxa_name_summarize()`: Summarize taxa names in phyloseq object for visualization purpose.
 
 ### Time series analysis
-- `s_map_rgl()`: Perform regularized S-map in Cenci et al. (2019) _Methods in Ecology and Evolution_.
-- `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series.
+- `s_map_rgl()`: Perform regularized S-map in [Cenci et al. (2019)](https://doi.org/10.1111/2041-210X.13150).
+- `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series (see [Thiel et al. 2006](https://doi.org/10.1209/epl/i2006-10147-0)).
 
 ### ggplot2 functions
 - `label_to_power10()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)
