@@ -28,36 +28,36 @@ library(macam)
 
 # Quick tutrials
 ## File/directory handling
-#### `outdir_create()`
+- `outdir_create()`
 ```{r, eval=FALSE}
 # Create output directory and save the directory name
 output_dir <- outdir_create()
-# Chenge str_end if the file extension is not ".R"
+# Change str_end if the file extension is not ".R"
 #output_dir <- outdir_create(str_end = 5)
 ```
 
-#### `save_workspace()`
+- `save_workspace()`
 ```{r, eval=FALSE}
 # Save workspace in the output directory
 save_workspace(output_dir)
 ```
 
-#### `save_session_info()`
+- `save_session_info()`
 ```{r, eval=FALSE}
 # Save session information in 00_SessionInfo directory
 save_session_info(create_session_info_dir = TRUE)
 ```
 
 ## Sequence analysis
-#### `AllOrients()`
-#### `PrimerHits()`
-#### `rarefy_even_coverage()`
-#### `plot_rarefy()`
-#### `taxa_name_summarize()`
+- `AllOrients()`
+- `PrimerHits()`
+- `rarefy_even_coverage()`
+- `plot_rarefy()`
+- `taxa_name_summarize()`
 
 ## Time series analysis
-#### `s_map_rgl()`
-#### `twin_surrogate_cpp()`
+- `s_map_rgl()`
+- `twin_surrogate_cpp()`
 
 ## ggplot2 functions
-#### `label_to_power10()`
+- `label_to_power10()`
