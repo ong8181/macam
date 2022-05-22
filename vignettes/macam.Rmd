@@ -60,7 +60,7 @@ AllOrients("ATGC")
 see [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html).
 
 - `rarefy_even_coverage()`, `plot_rarefy()`
-```{r}
+```{r, eval = FALSE}
 # Load library
 library(tidyverse)
 library(phyloseq)
