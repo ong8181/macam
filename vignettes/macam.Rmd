@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 # Installation
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 #install.packages("remotes")
 remotes::install_github("ong8181/macam")
 ```
