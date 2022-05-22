@@ -56,5 +56,5 @@ save_session_info <- function(session_info_dir = "00_SessionInfo", create_sessio
   }
   # Save session information
   writeLines(utils::capture.output(utils::sessionInfo()),
-             paste0(session_info_dir, current_file_name, "_", substr(Sys.time(), 1, 10), ".txt"))
+             paste0(session_info_dir, "/", current_file_name, "_", substr(Sys.time(), 1, 10), ".txt"))
 }

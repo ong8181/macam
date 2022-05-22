@@ -32,7 +32,8 @@ library(macam)
 ```{r, eval=FALSE}
 # Create output directory and save the directory name
 output_dir <- outdir_create()
-#output_dir <- "macamOut"
+# Chenge str_end if the file extension is not ".R"
+#output_dir <- outdir_create(str_end = 5)
 ```
 
 #### `save_workspace()`
