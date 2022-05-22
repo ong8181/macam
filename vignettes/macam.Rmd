@@ -2,7 +2,7 @@
 title: "macam: A collection of miscellaneous functions for ecology in R"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{macam}
+  %\VignetteIndexEntry{macam: A collection of miscellaneous functions for ecology in R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,13 +15,13 @@ knitr::opts_chunk$set(
 ```
 
 # Installation
-```{r setup}
+```{r, message=FALSE}
 #install.packages("remotes")
 remotes::install_github("ong8181/macam")
 ```
 
 # Load library
-```{r setup}
+```{r}
 library(macam)
 ```
 
