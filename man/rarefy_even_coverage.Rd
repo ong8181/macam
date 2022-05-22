@@ -20,29 +20,29 @@ rarefy_even_coverage(
 \arguments{
 \item{ps_obj}{Phyloseq object.}
 
-\item{coverage}{User-specified parameter (default = 0.97 = 97\%).}
+\item{coverage}{Numeric. Coverage specified by a user (default = 0.97 = 97\%).}
 
-\item{remove_not_rarefied}{Remove samples of which coverage is lower than coverage.}
+\item{remove_not_rarefied}{Logical. If \code{TRUE}, samples of which coverage is lower than the specified coverage will be removed.}
 
-\item{include_iNEXT_results}{Include iNEXT results or not. If TRUE, the function returns a list which contains two elements. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if TRUE, computation time will increase. IfFALSE, it returns a rarefiedphyloseq object only.}
+\item{include_iNEXT_results}{Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if \code{TRUE}, computation time will increase. If \code{FALSE}, it returns a rarefied phyloseq object only.}
 
-\item{nboot}{Specify nboot of iNEXT function (valid if include_iNEXT_results = TRUE).}
+\item{nboot}{Numeric. Specify \code{nboot} of iNEXT function (valid only if \code{include_iNEXT_results = TRUE}).}
 
-\item{knots}{Specify knots of iNEXT function (valid if include_iNEXT_results = TRUE).}
+\item{knots}{Numeric. Specify \code{knots} of iNEXT function (valid only if \code{include_iNEXT_results = TRUE}).}
 
-\item{n_rarefy_iter}{The number of iterations of rarefactions (default = 1).}
+\item{n_rarefy_iter}{Numeric. The number of iterations of rarefactions (default = 1).}
 
-\item{rarefy_average_method}{If n_rarefy_iter >= 2, this argument determines how the multiple rarefactions are summarized. rarefy_average_method = "round" uses round(). rarefy_average_method = "floor" uses floor(). rarefy_average_method = "ceiling" uses ceiling().}
+\item{rarefy_average_method}{Character. If \code{n_rarefy_iter} >= 2, this argument determines how the multiple rarefactions are summarized. r\code{arefy_average_method = "round"} uses \code{round()}. \code{rarefy_average_method = "floor"} uses \code{floor()}. \code{rarefy_average_method = "ceiling"} uses \code{ceiling()}.}
 
-\item{sample_method}{Specify which function is used for rarefaction. sample_method = "vegan" uses vegan::rrarefy(), while sample_method = "phyloseq" uses phyloseq:::rarefaction_subsample().}
+\item{sample_method}{Character. Specify which function is used for rarefaction. \code{sample_method = "vegan"} uses \code{vegan::rrarefy()}, while \code{sample_method = "phyloseq"} uses \code{phyloseq:::rarefaction_subsample()}.}
 
-\item{ran_seed}{Random seed.}
+\item{ran_seed}{Numeric. Random seed.}
 }
 \value{
 ps_rare Rarefied phyloseq object
 }
 \description{
-\code{rarefy_even_coverage} Perform coverage-based rarefaction for a phyloseq object using iNEXT package
+\code{rarefy_even_coverage} performs coverage-based rarefaction for a phyloseq object using iNEXT package
 }
 \examples{
 # rarefy_even_coverage(ps_obj, coverage = 0.97)

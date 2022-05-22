@@ -1,6 +1,6 @@
 #' @title AllOrients
-#' @description \code{AllOrients} xxx
-#' @param primer xxx.
+#' @description \code{AllOrients} expands a primer sequence and show all orientations.
+#' @param primer Character. Primer sequences (e.g., ATGC).
 #' @export
 #' @examples
 #' # AllOrients(primer)

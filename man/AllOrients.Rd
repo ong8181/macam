@@ -7,10 +7,10 @@
 AllOrients(primer)
 }
 \arguments{
-\item{primer}{xxx.}
+\item{primer}{Character. Primer sequences (e.g., ATGC).}
 }
 \description{
-\code{AllOrients} xxx
+\code{AllOrients} expands a primer sequence and show all orientations.
 }
 \examples{
 # AllOrients(primer)

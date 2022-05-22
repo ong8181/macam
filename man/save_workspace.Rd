@@ -2,17 +2,15 @@
 % Please edit documentation in R/file_dir_handling.R
 \name{save_workspace}
 \alias{save_workspace}
-\title{Save workspace}
+\title{Save workspace using an output directory name}
 \usage{
-save_workspace(output_dir, list = ls(all.names = TRUE))
+save_workspace(output_dir)
 }
 \arguments{
-\item{output_dir}{xxx.}
-
-\item{list}{xxx.}
+\item{output_dir}{Character. Workspace will be saved in this directory.}
 }
 \description{
-\code{save_workspace} xxx
+\code{save_workspace} saves current workspace in a user-specified output directory.
 }
 \examples{
 # output_dir <- outdir_create()

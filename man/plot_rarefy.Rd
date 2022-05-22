@@ -11,10 +11,13 @@ plot_rarefy(ps_obj, plot_rarefied_point = TRUE, ran_seed = 1234)
 
 \item{plot_rarefied_point}{Logical. Specify whether rarefied reads are plotted.}
 
-\item{ran_seed}{Random seed.}
+\item{ran_seed}{Numeric. Random seed.}
+}
+\value{
+g_rare ggplot object. User may further edit the figure using \code{ggplot2}.
 }
 \description{
-\code{plot_rarefy} Perform coverage-based rarefaction for a phyloseq object using iNEXT package
+\code{plot_rarefy} visualizes a coverage-based rarefaction.
 }
 \examples{
 # plot_rarefy(ps_obj)

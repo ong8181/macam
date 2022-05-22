@@ -1,12 +1,13 @@
 #' @title Create output directory using the currently-running file name
-#' @description \code{outdir_create} Create output directory using the currently-running file name
-#' @param save_dir_name Logical. If TRUE, output directory name is saved.
+#' @description \code{outdir_create} automatically detect the file name of the current srcipt and create output directory using the file name.
+#' @param save_dir_name Logical. If `TRUE`, output directory name is saved to an object.
 #' @param str_end Integer. Trim `str_end` characters from the file name.
+#' @param suffix Character. Suffix that will be appended to the file name.
 #' @return output_dir Output directory name
 #' @export
 #' @examples
 #' # outdir_create()
-outdir_create <- function(save_dir_name = TRUE, str_end = 3) {
+outdir_create <- function(save_dir_name = TRUE, str_end = 3, suffix = "Out") {
   # Extract output directory name
   output_dir <- rstudioapi::getSourceEditorContext()$path %>%
     basename %>% stringr::str_sub(end = - str_end) %>%
@@ -18,29 +19,35 @@ outdir_create <- function(save_dir_name = TRUE, str_end = 3) {
 }
 
 
-#' @title Save workspace
-#' @description \code{save_workspace} xxx
-#' @param output_dir xxx.
-#' @param list xxx.
+#' @title Save workspace using an output directory name
+#' @description \code{save_workspace} saves current workspace in a user-specified output directory.
+#' @param output_dir Character. Workspace will be saved in this directory.
 #' @export
 #' @examples
 #' # output_dir <- outdir_create()
 #' # save_workspace(output_dir)
-save_workspace <- function(output_dir, list = ls(all.names = TRUE)) {
+save_workspace <- function(output_dir) {
+  # Create output_dir if it does not exists
+  if (!dir.exists(output_dir)) dir.create(output_dir)
+  # Save workspace
   save(list = ls(all.names = TRUE),
      file = paste0(output_dir, "/", output_dir, ".RData"))
 }
 
 
-#' @title Save session information
-#' @description \code{save_session_info} xxx
-#' @param output_dir xxx.
-#' @param session_info_dir xxx.
+#' @title Save session information using an output directory name
+#' @description \code{save_session_info} saves session information and append date information automatically.
+#' @param output_dir Character. An output directory name. It will be used as a name of the session information text file.
+#' @param session_info_dir Character. Name of the session information directory.
+#' @param create_session_info_dir Logical. If `TRUE`, the function automatically creates an output directory for the session information
 #' @export
 #' @examples
 #' # output_dir <- outdir_create()
 #' # save_session_info(output_dir)
-save_session_info <- function(output_dir, session_info_dir = "00_SessionInfo") {
+save_session_info <- function(output_dir, session_info_dir = "00_SessionInfo", create_session_info_dir = FALSE) {
+  # Create session_info_dir if it does not exists
+  if (!dir.exists(session_info_dir) & create_session_info_dir) dir.create(session_info_dir)
+  # Save session information
   writeLines(utils::capture.output(utils::sessionInfo()),
              paste0(session_info_dir, output_dir, "_", substr(Sys.time(), 1, 10), ".txt"))
 }

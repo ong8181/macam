@@ -2,9 +2,11 @@
 
 export(AllOrients)
 export(PrimerHits)
+export(label_to_power10)
 export(outdir_create)
 export(plot_rarefy)
 export(rarefy_even_coverage)
 export(save_session_info)
 export(save_workspace)
+export(taxa_name_summarize)
 importFrom(magrittr,"%>%")

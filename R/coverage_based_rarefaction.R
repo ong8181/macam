@@ -1,16 +1,16 @@
 #' @title Perform coverage-based rarefaction for a phyloseq object
-#' @description \code{rarefy_even_coverage} Perform coverage-based rarefaction for a phyloseq object using iNEXT package
+#' @description \code{rarefy_even_coverage} performs coverage-based rarefaction for a phyloseq object using iNEXT package
 #' @importFrom magrittr %>%
 #' @param ps_obj Phyloseq object.
-#' @param coverage User-specified parameter (default = 0.97 = 97%).
-#' @param remove_not_rarefied Remove samples of which coverage is lower than coverage.
-#' @param include_iNEXT_results Include iNEXT results or not. If TRUE, the function returns a list which contains two elements. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if TRUE, computation time will increase. IfFALSE, it returns a rarefiedphyloseq object only.
-#' @param nboot Specify nboot of iNEXT function (valid if include_iNEXT_results = TRUE).
-#' @param knots Specify knots of iNEXT function (valid if include_iNEXT_results = TRUE).
-#' @param n_rarefy_iter The number of iterations of rarefactions (default = 1).
-#' @param rarefy_average_method  If n_rarefy_iter >= 2, this argument determines how the multiple rarefactions are summarized. rarefy_average_method = "round" uses round(). rarefy_average_method = "floor" uses floor(). rarefy_average_method = "ceiling" uses ceiling().
-#' @param sample_method Specify which function is used for rarefaction. sample_method = "vegan" uses vegan::rrarefy(), while sample_method = "phyloseq" uses phyloseq:::rarefaction_subsample().
-#' @param ran_seed Random seed.
+#' @param coverage Numeric. Coverage specified by a user (default = 0.97 = 97%).
+#' @param remove_not_rarefied Logical. If `TRUE`, samples of which coverage is lower than the specified coverage will be removed.
+#' @param include_iNEXT_results Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if `TRUE`, computation time will increase. If `FALSE`, it returns a rarefied phyloseq object only.
+#' @param nboot Numeric. Specify `nboot` of iNEXT function (valid only if `include_iNEXT_results = TRUE`).
+#' @param knots Numeric. Specify `knots` of iNEXT function (valid only if `include_iNEXT_results = TRUE`).
+#' @param n_rarefy_iter Numeric. The number of iterations of rarefactions (default = 1).
+#' @param rarefy_average_method  Character. If `n_rarefy_iter` >= 2, this argument determines how the multiple rarefactions are summarized. r`arefy_average_method = "round"` uses `round()`. `rarefy_average_method = "floor"` uses `floor()`. `rarefy_average_method = "ceiling"` uses `ceiling()`.
+#' @param sample_method Character. Specify which function is used for rarefaction. `sample_method = "vegan"` uses `vegan::rrarefy()`, while `sample_method = "phyloseq"` uses `phyloseq:::rarefaction_subsample()`.
+#' @param ran_seed Numeric. Random seed.
 #' @return ps_rare Rarefied phyloseq object
 #' @export
 #' @examples
@@ -180,11 +180,12 @@ rarefy_even_coverage <-  function(ps_obj,
 
 
 #' @title Visualize rarefaction curve
-#' @description \code{plot_rarefy} Perform coverage-based rarefaction for a phyloseq object using iNEXT package
+#' @description \code{plot_rarefy} visualizes a coverage-based rarefaction.
 #' @importFrom magrittr %>%
 #' @param ps_obj Phyloseq object.
 #' @param plot_rarefied_point Logical. Specify whether rarefied reads are plotted.
-#' @param ran_seed Random seed.
+#' @param ran_seed Numeric. Random seed.
+#' @return g_rare ggplot object. User may further edit the figure using `ggplot2`.
 #' @export
 #' @examples
 #' # plot_rarefy(ps_obj)
@@ -237,10 +238,11 @@ plot_rarefy <- function (ps_obj,
 
 
 #' @title Estimate the required sample size for a particular coverage
-#' @description \code{coverage_to_samplesize} Perform coverage-based rarefaction for a phyloseq object using iNEXT package
-#' @param x vector of species abundances.
-#' @param coverage the desired sample completeness that we want to achieve.
+#' @description \code{coverage_to_samplesize} estimates the required sample size for a particular coverage. using iNEXT package
+#' @param x Vector of species abundances.
+#' @param coverage The desired sample completeness that we want to achieve.
 #' @param add_attr Logical. Specify whether attributes are added.
+#' @return mm The required sample size
 #' @noRd
 #' @keywords internal
 

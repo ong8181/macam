@@ -4,18 +4,20 @@
 \alias{outdir_create}
 \title{Create output directory using the currently-running file name}
 \usage{
-outdir_create(save_dir_name = TRUE, str_end = 3)
+outdir_create(save_dir_name = TRUE, str_end = 3, suffix = "Out")
 }
 \arguments{
-\item{save_dir_name}{Logical. If TRUE, output directory name is saved.}
+\item{save_dir_name}{Logical. If \code{TRUE}, output directory name is saved to an object.}
 
 \item{str_end}{Integer. Trim \code{str_end} characters from the file name.}
+
+\item{suffix}{Character. Suffix that will be appended to the file name.}
 }
 \value{
 output_dir Output directory name
 }
 \description{
-\code{outdir_create} Create output directory using the currently-running file name
+\code{outdir_create} automatically detect the file name of the current srcipt and create output directory using the file name.
 }
 \examples{
 # outdir_create()

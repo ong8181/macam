@@ -21,7 +21,9 @@ Imports:
     phyloseq,
     purrr,
     rstudioapi,
+    scales,
     ShortRead,
+    stats,
     stringr,
     utils,
     vegan

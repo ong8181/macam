@@ -2,17 +2,23 @@
 % Please edit documentation in R/file_dir_handling.R
 \name{save_session_info}
 \alias{save_session_info}
-\title{Save session information}
+\title{Save session information using an output directory name}
 \usage{
-save_session_info(output_dir, session_info_dir = "00_SessionInfo")
+save_session_info(
+  output_dir,
+  session_info_dir = "00_SessionInfo",
+  create_session_info_dir = FALSE
+)
 }
 \arguments{
-\item{output_dir}{xxx.}
+\item{output_dir}{Character. An output directory name. It will be used as a name of the session information text file.}
 
-\item{session_info_dir}{xxx.}
+\item{session_info_dir}{Character. Name of the session information directory.}
+
+\item{create_session_info_dir}{Logical. If \code{TRUE}, the function automatically creates an output directory for the session information}
 }
 \description{
-\code{save_session_info} xxx
+\code{save_session_info} saves session information and append date information automatically.
 }
 \examples{
 # output_dir <- outdir_create()
