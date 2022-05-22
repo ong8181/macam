@@ -22,29 +22,29 @@ remotes::install_github("ong8181/macam", build_vignettes = TRUE, force = TRUE)
 ```
 
 # Load library
-```{r}
+```{r, eval=FALSE}
 library(macam)
 ```
 
 # Quick tutrials
 ## File/directory handling
 #### `outdir_create()`
-```{r}
+```{r, eval=FALSE}
 # Create output directory and save the directory name
-output_dir <- outdir_create()
-# output_dir <- "macamOut"
+#output_dir <- outdir_create()
+output_dir <- "macamOut"
 ```
 
 #### `save_workspace()`
-```{r}
+```{r, eval=FALSE}
 # Save workspace in the output directory
-save_workspace(output_dir)
+save_workspace()
 ```
 
 #### `save_session_info()`
-```{r}
+```{r, eval=FALSE}
 # Save session information in the output directory
-save_session_info()
+save_session_info(output_dir)
 ```
 
 ## Sequence analysis

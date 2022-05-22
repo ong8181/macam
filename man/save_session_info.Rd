@@ -5,17 +5,17 @@
 \title{Save session information using an output directory name}
 \usage{
 save_session_info(
-  output_dir,
   session_info_dir = "00_SessionInfo",
-  create_session_info_dir = FALSE
+  create_session_info_dir = FALSE,
+  str_end = 3
 )
 }
 \arguments{
-\item{output_dir}{Character. An output directory name. It will be used as a name of the session information text file.}
-
 \item{session_info_dir}{Character. Name of the session information directory.}
 
 \item{create_session_info_dir}{Logical. If \code{TRUE}, the function automatically creates an output directory for the session information}
+
+\item{str_end}{Integer. Trim \code{str_end} characters from the file name.}
 }
 \description{
 \code{save_session_info} saves session information and append date information automatically.
