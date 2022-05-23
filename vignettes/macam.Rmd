@@ -110,7 +110,7 @@ To be added.
 
 ## Time series analysis
 - `s_map_rgl()`
-```{r}
+```{r, eval = FALSE}
 # Load library
 library(rEDM)
 packageVersion("rEDM") # v0.7.5
