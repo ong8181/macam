@@ -127,7 +127,7 @@ library(rEDM)
 packageVersion("rEDM") # v0.7.5
 
 # Load data
-data(data_2sp)
+data(data_4sp)
 
 # Normalize and check model time series
 # Normalize and check model time series
