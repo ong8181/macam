@@ -51,7 +51,13 @@ s_map_regl(
 \item{save_smap_coefficients}{Logical. If \code{TRUE}, S-map coefficients will be saved.}
 }
 \value{
-list A list that contains predictions, statistics, and S-map coefficients (if \code{save_smap_coefficients = TRUE})
+A list containing:\tabular{ll}{
+\code{model_output} \tab  Model predictions \cr
+\tab \cr
+\code{stats} \tab  Statistics. \cr
+\tab \cr
+\code{smap_coefficients} \tab  S-map coefficients \cr
+}
 }
 \description{
 \code{extended_smap} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution.

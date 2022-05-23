@@ -2,6 +2,15 @@
 #' @description \code{AllOrients} expands a primer sequence and show all orientations.
 #' @param primer Character. Primer sequences (e.g., ATGC).
 #' @export
+#' @return An output contains:\tabular{ll}{
+#'    \code{Forward} \tab  Forward sequence \cr
+#'    \tab \cr
+#'    \code{Complement} \tab  Complement sequence \cr
+#'    \tab \cr
+#'    \code{Reverse} \tab  Reverse sequence \cr
+#'    \tab \cr
+#'    \code{RevComp} \tab  Reverse-complement sequence \cr
+#' }
 #' @examples
 #' # AllOrients(primer)
 # From https://benjjneb.github.io/dada2/ITS_workflow.html
@@ -15,9 +24,10 @@ AllOrients <- function(primer) {
 
 
 #' @title PrimerHits
-#' @description \code{PrimerHits} xxx
-#' @param primer xxx.
-#' @param fn xxx.
+#' @description \code{PrimerHits} search primer sequences in a FASTA/FASTQ file.
+#' @param primer Primer sequence
+#' @param fn File path to a FASTA/FASTQ file
+#' @return The number of primer hits.
 #' @export
 #' @examples
 #' # PrimerHits(primer, fn)

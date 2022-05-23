@@ -12,7 +12,7 @@
 #' @param s.update Character. If `TRUE`, update `s` if a sufficient number of twins is not found.
 #' @param n.twin.threshold Numeric. The minimum number of twins to be accepted.
 #' @param output.message Logical. If `TRUE`, show message.
-#' @return surrogate.one.col Twin surrogate time series.
+#' @return Twin surrogate time series.
 #' @export
 #' @examples
 #' # twin_surrogate_cpp(time_series, 3, 100)

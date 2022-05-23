@@ -39,7 +39,7 @@ rarefy_even_coverage(
 \item{ran_seed}{Numeric. Random seed.}
 }
 \value{
-ps_rare Rarefied phyloseq object
+Rarefied phyloseq object (\code{ps_rare}). If \code{include_iNEXT_results = TRUE}, \code{iNEXT} results are stored in the second element of the list.
 }
 \description{
 \code{rarefy_even_coverage} performs coverage-based rarefaction for a phyloseq object using iNEXT package

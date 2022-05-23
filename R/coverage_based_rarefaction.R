@@ -11,7 +11,7 @@
 #' @param rarefy_average_method  Character. If `n_rarefy_iter` >= 2, this argument determines how the multiple rarefactions are summarized. r`arefy_average_method = "round"` uses `round()`. `rarefy_average_method = "floor"` uses `floor()`. `rarefy_average_method = "ceiling"` uses `ceiling()`.
 #' @param sample_method Character. Specify which function is used for rarefaction. `sample_method = "vegan"` uses `vegan::rrarefy()`, while `sample_method = "phyloseq"` uses `phyloseq:::rarefaction_subsample()`.
 #' @param ran_seed Numeric. Random seed.
-#' @return ps_rare Rarefied phyloseq object
+#' @return Rarefied phyloseq object (`ps_rare`). If `include_iNEXT_results = TRUE`, `iNEXT` results are stored in the second element of the list.
 #' @export
 #' @examples
 #' # rarefy_even_coverage(ps_obj, coverage = 0.97)
@@ -185,7 +185,7 @@ rarefy_even_coverage <-  function(ps_obj,
 #' @param ps_obj Phyloseq object.
 #' @param plot_rarefied_point Logical. Specify whether rarefied reads are plotted.
 #' @param ran_seed Numeric. Random seed.
-#' @return g_rare ggplot object. User may further edit the figure using `ggplot2`.
+#' @return ggplot object (`g_rare`). User may further edit the figure using `ggplot2`.
 #' @export
 #' @examples
 #' # plot_rarefy(ps_obj)
@@ -242,7 +242,7 @@ plot_rarefy <- function (ps_obj,
 #' @param x Vector of species abundances.
 #' @param coverage The desired sample completeness that we want to achieve.
 #' @param add_attr Logical. Specify whether attributes are added.
-#' @return mm The required sample size
+#' @return The required sample size (`mm`).
 #' @noRd
 #' @keywords internal
 

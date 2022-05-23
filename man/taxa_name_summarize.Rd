@@ -14,7 +14,7 @@ taxa_name_summarize(ps_obj, taxa_rank, top_taxa_n = 10)
 \item{top_taxa_n}{Numeric. The number of taxa names that will be ratained.}
 }
 \value{
-ps_rare Rarefied phyloseq object. Summarized taxa names are in the \code{rep_tax} column.
+Rarefied phyloseq object (\code{ps_rare }). Summarized taxa names are in the \code{rep_tax} column.
 }
 \description{
 \code{taxa_name_summarize} summarizes taxa names in a phylosq object for a visualization purpose. Minor taxa names will be summarized as "Others". Also, if the taxa name is empty, the function assigns "Undetermined" for the taxa.

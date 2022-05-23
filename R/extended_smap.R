@@ -11,7 +11,7 @@
 #' @param glmnet_parallel Logical. If TRUE, the computation will be parallel (currently, experimental).
 #' @param random_seed Numeric. Random seed.
 #' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
-#' @return list A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
+#' @return A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
 #' @noRd
 #' @keywords internal
 extended_smap <- function(vectors,

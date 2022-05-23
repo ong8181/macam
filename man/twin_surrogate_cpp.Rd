@@ -45,7 +45,7 @@ twin_surrogate_cpp(
 \item{output.message}{Logical. If \code{TRUE}, show message.}
 }
 \value{
-surrogate.one.col Twin surrogate time series.
+Twin surrogate time series.
 }
 \description{
 \code{twin_surrogate_cpp} generates twin surrogate time series.

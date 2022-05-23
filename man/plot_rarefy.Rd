@@ -14,7 +14,7 @@ plot_rarefy(ps_obj, plot_rarefied_point = TRUE, ran_seed = 1234)
 \item{ran_seed}{Numeric. Random seed.}
 }
 \value{
-g_rare ggplot object. User may further edit the figure using \code{ggplot2}.
+ggplot object (\code{g_rare}). User may further edit the figure using \code{ggplot2}.
 }
 \description{
 \code{plot_rarefy} visualizes a coverage-based rarefaction.

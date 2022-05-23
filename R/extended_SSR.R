@@ -14,7 +14,13 @@
 #' @param glmnet_parallel Logical. If TRUE, the computation will be parallel (currently, experimental).
 #' @param random_seed Numeric. Random seed.
 #' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
-#' @return list A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
+#' @return A list containing:\tabular{ll}{
+#'    \code{model_output} \tab  Model predictions \cr
+#'    \tab \cr
+#'    \code{stats} \tab  Statistics. \cr
+#'    \tab \cr
+#'    \code{smap_coefficients} \tab  S-map coefficients \cr
+#' }
 #' @export
 #' @examples
 #' # s_map_regl()
@@ -108,7 +114,16 @@ s_map_regl <- function(block_time,
 #' @description \code{compute_stats_SSR} computes some statistics.
 #' @param obs Observations.
 #' @param pred Predictions.
-#' @return data.frame A summary statistics.
+#' @return
+#' @return A data frame containing:\tabular{ll}{
+#'    \code{N} \tab  The number of observation \cr
+#'    \tab \cr
+#'    \code{rho} \tab  Correlation coefficient \cr
+#'    \tab \cr
+#'    \code{mae} \tab  Mean absolute error \cr
+#'    \tab \cr
+#'    \code{rmse} \tab  Root mean square error \cr
+#' }
 #' @noRd
 #' @keywords internal
 compute_stats_SSR <- function(obs, pred)

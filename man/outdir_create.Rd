@@ -14,7 +14,7 @@ outdir_create(save_dir_name = TRUE, str_end = 3, suffix = "Out")
 \item{suffix}{Character. Suffix that will be appended to the file name.}
 }
 \value{
-output_dir Output directory name
+Output directory name.
 }
 \description{
 \code{outdir_create} automatically detect the file name of the current srcipt and create output directory using the file name.

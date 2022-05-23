@@ -3,7 +3,7 @@
 #' @param save_dir_name Logical. If `TRUE`, output directory name is saved to an object.
 #' @param str_end Integer. Trim `str_end` characters from the file name.
 #' @param suffix Character. Suffix that will be appended to the file name.
-#' @return output_dir Output directory name
+#' @return Output directory name.
 #' @export
 #' @examples
 #' # outdir_create()

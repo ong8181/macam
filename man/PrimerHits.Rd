@@ -7,12 +7,15 @@
 PrimerHits(primer, fn)
 }
 \arguments{
-\item{primer}{xxx.}
+\item{primer}{Primer sequence}
 
-\item{fn}{xxx.}
+\item{fn}{File path to a FASTA/FASTQ file}
+}
+\value{
+The number of primer hits.
 }
 \description{
-\code{PrimerHits} xxx
+\code{PrimerHits} search primer sequences in a FASTA/FASTQ file.
 }
 \examples{
 # PrimerHits(primer, fn)
