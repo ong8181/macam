@@ -19,12 +19,14 @@
 "tax_sheet"
 
 
-#' Two species model time series
+#' Four fish species time series from Ushio et al. (2018)
 #'
-#' @format A data frame with 1000 rows and 3 variables:
+#' @format A data frame with 285 rows and 4 variables:
 #' \describe{
-#'   \item{time}{Time ID}
-#'   \item{x}{Species x}
-#'   \item{y}{Species y}
+#'   \item{Sebastes.inermis}{Japanese red seaperch}
+#'   \item{Trachurus.japonicus}{Japanese jack mackerel}
+#'   \item{Girella.punctata}{Largescale Blackfish}
+#'   \item{Tridentiger.trigonocephalus}{The chameleon goby}
 #' }
-"data_2sp"
+#' @source \url{https://doi.org/10.1038/nature25504}
+"data_4sp"
