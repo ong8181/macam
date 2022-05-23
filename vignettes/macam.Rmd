@@ -136,23 +136,28 @@ y1 <- as.numeric(scale(data_4sp[,1]))
 # Estimate best embeding dimension
 simp_res1 <- rEDM::simplex(y1, E = 1:20, silent = T)
 (Ey1 <- simp_res1[which.min(simp_res1$rmse), "E"])
-block_y1 <- rEDM::make_block(y1, max_lag = Ey1)[,2:(Ey1+1)]
 
 # Perform S-map
 ## Normal S-map by rEDM
-y1_smap_rEDM <- block_lnlp(block_y1, method = "s-map", theta = 0.1)
+y1_smap_rEDM <- s_map(y1, E = Ey1, theta = 0.1)
 ## Normal S-map by macam
-y1_smap_macam <- s_map_regl(block_y1, theta = 0.1, regularized = F)
+y1_smap_macam <- s_map_regl(y1, E = Ey1, theta = 0.1, regularized = F)
 ## Regularized S-map (ridge)
-y1_ridge <- s_map_regl(block_y1, theta = 0.1, lambda = 0.1,
+y1_ridge <- s_map_regl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 0, random_seed = 1234)
 ## Regularized S-map (lasso)
-y1_lasso <- s_map_regl(block_y1, theta = 0.1, lambda = 0.1,
+y1_lasso <- s_map_regl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 1, random_seed = 1234)
 
 # Check RMSE
 y1_smap_rEDM$rmse; y1_smap_macam$stats$rmse
 y1_ridge$stats$rmse; y1_lasso$stats$rmse
+
+# extended_lnlp() version
+#block_y1 <- rEDM::make_block(y1, max_lag = Ey1)[,2:(Ey1+1)]
+#y1_ridge <- extende_lnlp(block_y1, theta = 0.1, lambda = 0.1,
+#                       regularized = T, alpha = 0, random_seed = 1234)
+
 ```
 
 ### `twin_surrogate_cpp()`

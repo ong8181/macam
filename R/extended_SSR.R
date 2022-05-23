@@ -1,5 +1,5 @@
-#' @title Perform regularized S-map
-#' @description \code{extended_smap} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution.
+#' @title Perform regularized S-map using a generalized function
+#' @description \code{extended_lnlp} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution. Multivariate S-map is also supported.
 #' @param block_time Dataframe or matrix. Original time series.
 #' @param lib Library indices.
 #' @param pred Prediction indices.
@@ -23,23 +23,23 @@
 #' }
 #' @export
 #' @examples
-#' # s_map_regl()
-s_map_regl <- function(block_time,
-                       lib = c(1, NROW(block_time)),
-                       pred = lib,
-                       tp = 1,
-                       target_column = 1,
-                       lib_column = 1:NCOL(block_time),
-                       num_neighbors = NCOL(block_time) + 1,
-                       theta = 0,
-                       #method = "s-map", # currently "simplex" option cannot be used
-                       regularized = FALSE,
-                       lambda = NULL,
-                       alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
-                       glmnet_parallel = FALSE,
-                       random_seed = NULL,
-                       #no_parallel = glmnet_parallel,
-                       save_smap_coefficients = FALSE)
+#' # extended_lnlp()
+extended_lnlp <- function(block_time,
+                          lib = c(1, NROW(block_time)),
+                          pred = lib,
+                          tp = 1,
+                          target_column = 1,
+                          lib_column = 1:NCOL(block_time),
+                          num_neighbors = NCOL(block_time) + 1,
+                          theta = 0,
+                          #method = "s-map", # currently "simplex" option cannot be used
+                          regularized = FALSE,
+                          lambda = NULL,
+                          alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
+                          glmnet_parallel = FALSE,
+                          random_seed = NULL,
+                          #no_parallel = glmnet_parallel,
+                          save_smap_coefficients = FALSE)
 {
   # do multivariate prediction using s-map
   # theta = relative weighting of neighbors based on Euclidean distance in a state space
@@ -138,3 +138,81 @@ compute_stats_SSR <- function(obs, pred)
   rmse = sqrt(mean((obs-pred)^2, na.rm = TRUE))
   return(data.frame(N = N, rho = rho, mae = mae, rmse = rmse))
 }
+
+
+
+#' @title Perform regularized S-map
+#' @description \code{s_map_regl} is a wrapper function of `extended_lnlp()` for regularized S-map. For multivariate S-map, please use `extended_lnlp()`.
+#' @param ts_data Data.frame, matrix, or vector. One-column univariate time series.
+#' @param E Integer. Embedding dimension.
+#' @param lib Library indices.
+#' @param pred Prediction indices.
+#' @param tp Forecasting time ahead.
+#' @param num_neighbors Numeric. The number of nearest neighbors.
+#' @param theta Numeric. Weighing function for S-map.
+#' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
+#' @param lambda Numeric. Specify the strength of penalty in the regularization.
+#' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
+#' @param glmnet_parallel Logical. If TRUE, the computation will be parallel (currently, experimental).
+#' @param random_seed Numeric. Random seed.
+#' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
+#' @return A list containing:\tabular{ll}{
+#'    \code{model_output} \tab  Model predictions \cr
+#'    \tab \cr
+#'    \code{stats} \tab  Statistics. \cr
+#'    \tab \cr
+#'    \code{smap_coefficients} \tab  S-map coefficients \cr
+#' }
+#' @export
+#' @examples
+#' # s_map_regl()
+s_map_regl <- function(ts_data,
+                       E,
+                       lib = c(1, length(ts_data)),
+                       pred = lib,
+                       tp = 1,
+                       num_neighbors = length(ts_data) + 1,
+                       theta = 0,
+                       regularized = FALSE,
+                       lambda = NULL,
+                       alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
+                       glmnet_parallel = FALSE,
+                       random_seed = NULL,
+                       save_smap_coefficients = FALSE)
+{
+  # Embed time series
+  if (E == 1) {
+    ts_embed <- ts_data
+  } else if (E > 1) {
+    # Convert to  data.frame
+    ts_embed <- as.data.frame(ts_data)
+    colnames(ts_embed) <- "col1"
+    # Add time-delayed time series as a new column
+    for(i in 1:(E-1)) {
+      ts_embed <- dplyr::mutate(ts_embed, new_col = dplyr::lag(ts_data, n = i))
+      colnames(ts_embed)[i+1] <- sprintf("col1_%s", i)
+    }
+  } else {
+    stop("E should be > 0.")
+  }
+
+  # Perform S-map
+  smap_res <- extended_lnlp(ts_embed,
+                            lib = lib,
+                            pred = pred,
+                            tp = tp,
+                            target_column = 1,
+                            lib_column = 1:NCOL(ts_embed),
+                            num_neighbors = num_neighbors,
+                            theta = theta,
+                            regularized = regularized,
+                            lambda = lambda,
+                            alpha = alpha,
+                            glmnet_parallel = glmnet_parallel,
+                            random_seed = random_seed,
+                            save_smap_coefficients = save_smap_coefficients)
+
+  # Return the result
+  return(smap_res)
+}
+

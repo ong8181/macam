@@ -2,6 +2,7 @@
 
 export(AllOrients)
 export(PrimerHits)
+export(extended_lnlp)
 export(label_10_to_power)
 export(outdir_create)
 export(plot_rarefy)
