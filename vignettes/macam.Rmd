@@ -141,12 +141,12 @@ simp_res1 <- rEDM::simplex(y1, E = 1:20, silent = T)
 ## Normal S-map by rEDM
 y1_smap_rEDM <- s_map(y1, E = Ey1, theta = 0.1)
 ## Normal S-map by macam
-y1_smap_macam <- s_map_regl(y1, E = Ey1, theta = 0.1, regularized = F)
+y1_smap_macam <- s_map_rgl(y1, E = Ey1, theta = 0.1, regularized = F)
 ## Regularized S-map (ridge)
-y1_ridge <- s_map_regl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
+y1_ridge <- s_map_rgl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 0, random_seed = 1234)
 ## Regularized S-map (lasso)
-y1_lasso <- s_map_regl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
+y1_lasso <- s_map_rgl(y1, E = Ey1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 1, random_seed = 1234)
 
 # Check RMSE

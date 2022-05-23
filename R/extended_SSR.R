@@ -142,7 +142,7 @@ compute_stats_SSR <- function(obs, pred)
 
 
 #' @title Perform regularized S-map
-#' @description \code{s_map_regl} is a wrapper function of `extended_lnlp()` for regularized S-map. For multivariate S-map, please use `extended_lnlp()`.
+#' @description \code{s_map_rgl} is a wrapper function of `extended_lnlp()` for regularized S-map. For multivariate S-map, please use `extended_lnlp()`.
 #' @param ts_data Data.frame, matrix, or vector. One-column univariate time series.
 #' @param E Integer. Embedding dimension.
 #' @param lib Library indices.
@@ -165,8 +165,8 @@ compute_stats_SSR <- function(obs, pred)
 #' }
 #' @export
 #' @examples
-#' # s_map_regl()
-s_map_regl <- function(ts_data,
+#' # s_map_rgl()
+s_map_rgl <- function(ts_data,
                        E,
                        lib = c(1, length(ts_data)),
                        pred = lib,
