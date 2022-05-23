@@ -2,7 +2,7 @@
 
 export(AllOrients)
 export(PrimerHits)
-export(label_to_power10)
+export(label_10_to_power)
 export(outdir_create)
 export(plot_rarefy)
 export(rarefy_even_coverage)
