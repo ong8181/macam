@@ -101,14 +101,41 @@ sample_data(ps_rare)
 # ----------------------------------------------- #
 # Visualize rarefaction curve
 # ----------------------------------------------- #
-g1 <- plot_rarefy(ps_rare_raw) +
+plot_rarefy(ps_rare_raw) +
   coord_cartesian(xlim = c(0, 4000))
 ```
 
 - `taxa_name_summarize()`
+To be added.
 
 ## Time series analysis
 - `s_map_rgl()`
+```{r}
+# Load library
+library(rEDM)
+packageVersion("rEDM") # v0.7.5
+
+# Load data
+data(data_2sp)
+
+# Normalize and check model time series
+x1 <- as.numeric(scale(data_2sp$x[101:1000])) # Discard the first 100 data
+
+# Estimate best embeding dimension
+simp_res1 <- rEDM::simplex(x1, E = 1:20, silent = T)
+(Ex1 <- simp_res1[which.min(simp_res1$rmse), "E"])
+block_x1 <- rEDM::make_block(x1, max_lag = Ex1)[,2:(Ex1+1)]
+
+# Perform S-map
+x1_smap <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
+                      regularized = F, random_seed = 1234)
+x1_ridge <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
+                       regularized = T, alpha = 0, random_seed = 1234)
+x1_lasso <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
+                       regularized = T, alpha = 1, random_seed = 1234)
+
+```
+
 - `twin_surrogate_cpp()`
 
 ## ggplot2 functions
