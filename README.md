@@ -38,4 +38,4 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series (see [Thiel et al. 2006](https://doi.org/10.1209/epl/i2006-10147-0)).
 
 ### ggplot2 functions
-- `label_to_power10()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)
+- `label_10_to_power()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)

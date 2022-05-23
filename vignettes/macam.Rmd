@@ -151,7 +151,7 @@ y1_lasso <- s_map_regl(block_y1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 1, random_seed = 1234)
 
 # Check RMSE
-y1_smap_rEDM$rmse; y1_smap$stats$rmse
+y1_smap_rEDM$rmse; y1_smap_macam$stats$rmse
 y1_ridge$stats$rmse; y1_lasso$stats$rmse
 ```
 
