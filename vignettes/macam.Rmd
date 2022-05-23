@@ -30,7 +30,7 @@ browseVignettes("macam")
 
 # Quick tutrials
 ## File/directory handling
-- `outdir_create()`
+### `outdir_create()`
 ```{r, eval=FALSE}
 # Create output directory and save the directory name
 output_dir <- outdir_create()
@@ -38,28 +38,28 @@ output_dir <- outdir_create()
 #output_dir <- outdir_create(str_end = 5)
 ```
 
-- `save_workspace()`
+### `save_workspace()`
 ```{r, eval=FALSE}
 # Save workspace in the output directory
 save_workspace(output_dir)
 ```
 
-- `save_session_info()`
+### `save_session_info()`
 ```{r, eval=FALSE}
 # Save session information in 00_SessionInfo directory
 save_session_info(create_session_info_dir = TRUE)
 ```
 
 ## Sequence analysis
-- `AllOrients()`
+### `AllOrients()`
 ```{r, eval=FALSE}
 AllOrients("ATGC")
 ```
 
-- `PrimerHits()`
+### `PrimerHits()`
 see [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html).
 
-- `rarefy_even_coverage()`, `plot_rarefy()`
+### `rarefy_even_coverage()`, `plot_rarefy()`
 ```{r, eval = FALSE}
 # Load library
 library(tidyverse)
@@ -105,11 +105,22 @@ plot_rarefy(ps_rare_raw) +
   coord_cartesian(xlim = c(0, 4000))
 ```
 
-- `taxa_name_summarize()`
-To be added.
+### `taxa_name_summarize()`
+```{r, eval = FALSE}
+# Check current family names
+tax_table(ps_rare)[,"family"]
+
+# Summarize taxa names and store them "rep_tax" column
+ps_tax_sum <- taxa_name_summarize(ps_rare, "family", top_taxa_n = 10)
+
+# Only 8 taxa names + "Undetermined" + "Others" are kept in the "rep_tax" column
+# Check current family names
+tax_table(ps_tax_sum)[,"rep_tax"] %>%
+  as.data.frame %>% unlist %>% unique
+```
 
 ## Time series analysis
-- `s_map_rgl()`
+### `s_map_rgl()`
 ```{r, eval = FALSE}
 # Load library
 library(rEDM)
@@ -119,24 +130,66 @@ packageVersion("rEDM") # v0.7.5
 data(data_2sp)
 
 # Normalize and check model time series
-x1 <- as.numeric(scale(data_2sp$x[101:1000])) # Discard the first 100 data
+# Normalize and check model time series
+y1 <- as.numeric(scale(data_4sp[,1]))
 
 # Estimate best embeding dimension
-simp_res1 <- rEDM::simplex(x1, E = 1:20, silent = T)
-(Ex1 <- simp_res1[which.min(simp_res1$rmse), "E"])
-block_x1 <- rEDM::make_block(x1, max_lag = Ex1)[,2:(Ex1+1)]
+simp_res1 <- rEDM::simplex(y1, E = 1:20, silent = T)
+(Ey1 <- simp_res1[which.min(simp_res1$rmse), "E"])
+block_y1 <- rEDM::make_block(y1, max_lag = Ey1)[,2:(Ey1+1)]
 
 # Perform S-map
-x1_smap <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
-                      regularized = F, random_seed = 1234)
-x1_ridge <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
+## Normal S-map by rEDM
+y1_smap_rEDM <- block_lnlp(block_y1, method = "s-map", theta = 0.1)
+## Normal S-map by macam
+y1_smap_macam <- s_map_regl(block_y1, theta = 0.1, regularized = F)
+## Regularized S-map (ridge)
+y1_ridge <- s_map_regl(block_y1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 0, random_seed = 1234)
-x1_lasso <- s_map_regl(block_x1, theta = 1, lambda = 0.1,
+## Regularized S-map (lasso)
+y1_lasso <- s_map_regl(block_y1, theta = 0.1, lambda = 0.1,
                        regularized = T, alpha = 1, random_seed = 1234)
 
+# Check RMSE
+y1_smap_rEDM$rmse; y1_smap$stats$rmse
+y1_ridge$stats$rmse; y1_lasso$stats$rmse
 ```
 
-- `twin_surrogate_cpp()`
+### `twin_surrogate_cpp()`
+```{r, eval = FALSE}
+# Load library
+library(tidyverse)
+
+# Generate twin surrogates
+y1_twin <- twin_surrogate_cpp(y1, dim = Ey1, num.iter = 100,
+                              surrogate.option = "phase_lock",
+                              initial.point = "same_season",
+                              point.per.year = 24)
+
+# Visualize twin surrogate
+y1_twin_df <- data.frame(time = 1:length(y1),
+                         y1 = y1,
+                         y1_twin1 = y1_twin$V1,
+                         y1_twin2 = y1_twin$V2) %>% 
+  pivot_longer(cols = -time, names_to = "time_series")
+
+ggplot(y1_twin_df, aes(x = time, y = value, color = time_series)) +
+  geom_line()
+```
 
 ## ggplot2 functions
-- `label_to_power10()`
+#### `label_10_to_power()`
+```{r, eval = FALSE}
+# Load library
+library(ggplot2)
+
+# Prepare data
+data(data_4sp)
+data_4sp$time <- 1:nrow(data_4sp)
+
+# Generate ggplot figure
+g1 <- ggplot(data_4sp, aes(x = time, y = Trachurus.japonicus)) + geom_line()
+
+# Convert y-axis label to a scientific notation
+g1 + scale_y_continuous(breaks = seq(0, 1500, 200), label= label_10_to_power)
+```

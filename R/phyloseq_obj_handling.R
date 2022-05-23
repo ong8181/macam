@@ -4,7 +4,7 @@
 #' @param ps_obj Phyloseq object.
 #' @param taxa_rank Character. The name of phylogenetic rank that will be summarized.
 #' @param top_taxa_n Numeric. The number of taxa names that will be ratained.
-#' @return ps_rare Rarefied phyloseq object
+#' @return ps_rare Rarefied phyloseq object. Summarized taxa names are in the `rep_tax` column.
 #' @export
 #' @examples
 #' # taxa_name_summarize(ps_obj, "phylum", top_taxa_n = 10)
