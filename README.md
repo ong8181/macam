@@ -6,6 +6,10 @@
 
 This pacakge is a collection of miscellaneous functions for ecological studies.
 
+## License
+See LICENSE.
+
+
 ## Installation
 
 You can install the development version of macam from [GitHub](https://github.com/) with:
