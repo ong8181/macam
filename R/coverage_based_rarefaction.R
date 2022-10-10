@@ -198,7 +198,7 @@ plot_rarefy <- function (ps_obj,
   names(inext_res) <- phyloseq::sample_names(ps_obj[[1]])
 
   # Add sample sames to each data
-  inext_df <- purrr::map_dfr(inext_res, function(x) return(data.frame(x)), .id = "sample")
+  inext_df <- purrr::map_dfr(inext_res, function(x) return(data.frame(x$size_based)), .id = "sample")
   colnames(inext_df)[which(colnames(inext_df) == "m")] <- "x"
   colnames(inext_df)[which(colnames(inext_df) == "qD")] <- "y"
   #dplyr::rename(x = m, y = qD)
