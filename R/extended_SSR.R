@@ -116,7 +116,6 @@ extended_lnlp <- function(block_time,
 #' @description \code{compute_stats_SSR} computes some statistics.
 #' @param obs Observations.
 #' @param pred Predictions.
-#' @return
 #' @return A data frame containing:\tabular{ll}{
 #'    \code{N} \tab  The number of observation \cr
 #'    \tab \cr

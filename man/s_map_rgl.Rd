@@ -11,6 +11,7 @@ s_map_rgl(
   pred = lib,
   tp = 1,
   num_neighbors = length(ts_data) + 1,
+  dist_w = NULL,
   theta = 0,
   regularized = FALSE,
   lambda = NULL,

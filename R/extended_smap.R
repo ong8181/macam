@@ -31,6 +31,15 @@ extended_smap <- function(vectors,
 {
   #require(glmnet)
   #no_parallel = glmnet_parallel
+  # vectors = block_multiview
+  # lib_indices = 1:nrow(block_multiview)
+  # pred_indices = 1:nrow(block_multiview)
+  # target_column = 1
+  # dist_w = block_multiview
+  # theta = 1
+  # #dist_w = multiview_dist
+  # regularized = TRUE
+  # save_smap_coefficients = TRUE
 
   # set E here
   E <- NCOL(vectors)
@@ -58,6 +67,17 @@ extended_smap <- function(vectors,
     next_seed <- as.integer(stats::runif(1) * 32768)
   }
 
+  # Check the structure of dist_w
+  if (!is.null(dist_w)) {
+    if (!is.matrix(dist_w)) {
+      stop("\"dist_w\" should be a matrix.")
+    } else if (dim(dist_w)[1] != dim(dist_w)[2]) {
+      stop("\"dist_w\" should be a sqiare matrix.")
+    } else if (NROW(vectors) != NROW(dist_w)) {
+      stop("The \"nrow(dist_w)\" should be same with the time series length.")
+    }
+  }
+
   #-------------------- Main loop to make predictions --------------------#
     make_one_predict <- function(p)
     {
@@ -69,21 +89,20 @@ extended_smap <- function(vectors,
 
       # compute distances of temporal information
       q <- matrix(rep(vectors[p,], length(libs)), nrow = length(libs), byrow = T)
-      distances <- sqrt(rowSums((vectors[libs,] - q) ^ 2))
 
       # specify a distant matrix for weights
       if (is.null(dist_w)) {
+        # compute distances
+        distances <- sqrt(rowSums((vectors[libs,] - q) ^ 2))
         # if no distant matrix is provided
         # compute temporal weights
         d_bar <- mean(distances, na.rm = TRUE)
         c_ws <- exp(-theta * distances / d_bar)
-      } else if (is.matrix(dist_w) | (dim(dist_w)[1] != dim(dist_w)[2])) {
-        stop("\"dist_w\" should be a distance matrix (not a dist object).")
-      } else if (NROW(vectors) != NROW(dist_w)) {
-        stop("The \"nrow(dist_w)\" should be same with the time series length.")
       } else {
+        # compute distances
+        distances <- as.numeric(dist_w[libs,p])
         # exclude time point p from the distance matrix
-        d_bar <- mean(dist_w[-p,-p], na.rm = TRUE)
+        d_bar <- mean(distances, na.rm = TRUE)
         c_ws <- exp(-theta * distances / d_bar)
       }
 

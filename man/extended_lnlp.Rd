@@ -12,6 +12,7 @@ extended_lnlp(
   target_column = 1,
   lib_column = 1:NCOL(block_time),
   num_neighbors = NCOL(block_time) + 1,
+  dist_w = NULL,
   theta = 0,
   regularized = FALSE,
   lambda = NULL,
