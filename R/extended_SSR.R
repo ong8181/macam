@@ -31,6 +31,7 @@ extended_lnlp <- function(block_time,
                           target_column = 1,
                           lib_column = 1:NCOL(block_time),
                           num_neighbors = NCOL(block_time) + 1,
+                          dist_w = NULL,
                           theta = 0,
                           #method = "s-map", # currently "simplex" option cannot be used
                           regularized = FALSE,
@@ -80,6 +81,7 @@ extended_lnlp <- function(block_time,
   }else if(method == "s-map" |method == "s_map" |method == "smap"){
     smap_out <- extended_smap(vectors, target,
                               lib_indices, pred_indices, theta,
+                              dist_w = dist_w,
                               regularized = regularized,
                               lambda = lambda,
                               alpha = alpha,
@@ -167,18 +169,19 @@ compute_stats_SSR <- function(obs, pred)
 #' @examples
 #' # s_map_rgl()
 s_map_rgl <- function(ts_data,
-                       E,
-                       lib = c(1, length(ts_data)),
-                       pred = lib,
-                       tp = 1,
-                       num_neighbors = length(ts_data) + 1,
-                       theta = 0,
-                       regularized = FALSE,
-                       lambda = NULL,
-                       alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
-                       glmnet_parallel = FALSE,
-                       random_seed = NULL,
-                       save_smap_coefficients = FALSE)
+                      E,
+                      lib = c(1, length(ts_data)),
+                      pred = lib,
+                      tp = 1,
+                      num_neighbors = length(ts_data) + 1,
+                      dist_w = NULL,
+                      theta = 0,
+                      regularized = FALSE,
+                      lambda = NULL,
+                      alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
+                      glmnet_parallel = FALSE,
+                      random_seed = NULL,
+                      save_smap_coefficients = FALSE)
 {
   # Embed time series
   if (E == 1) {
@@ -204,6 +207,7 @@ s_map_rgl <- function(ts_data,
                             target_column = 1,
                             lib_column = 1:NCOL(ts_embed),
                             num_neighbors = num_neighbors,
+                            dist_w = dist_w,
                             theta = theta,
                             regularized = regularized,
                             lambda = lambda,

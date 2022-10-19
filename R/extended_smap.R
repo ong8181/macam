@@ -19,6 +19,7 @@ extended_smap <- function(vectors,
                           lib_indices,
                           pred_indices,
                           theta,
+                          dist_w = NULL,
                           regularized = FALSE,
                           lambda = NULL,
                           alpha = 0, # default is the ridge regression.
@@ -70,9 +71,21 @@ extended_smap <- function(vectors,
       q <- matrix(rep(vectors[p,], length(libs)), nrow = length(libs), byrow = T)
       distances <- sqrt(rowSums((vectors[libs,] - q) ^ 2))
 
-      # compute temporal weights
-      d_bar <- mean(distances, na.rm = TRUE)
-      c_ws <- exp(-theta * distances / d_bar)
+      # specify a distant matrix for weights
+      if (is.null(dist_w)) {
+        # if no distant matrix is provided
+        # compute temporal weights
+        d_bar <- mean(distances, na.rm = TRUE)
+        c_ws <- exp(-theta * distances / d_bar)
+      } else if (is.matrix(dist_w) | (dim(dist_w)[1] != dim(dist_w)[2])) {
+        stop("\"dist_w\" should be a distance matrix (not a dist object).")
+      } else if (NROW(vectors) != NROW(dist_w)) {
+        stop("The \"nrow(dist_w)\" should be same with the time series length.")
+      } else {
+        # exclude time point p from the distance matrix
+        d_bar <- mean(dist_w[-p,-p], na.rm = TRUE)
+        c_ws <- exp(-theta * distances / d_bar)
+      }
 
       if (regularized)
       {
