@@ -293,6 +293,11 @@ s_map_mdr <- function(block,
     } else {
       max_delay_record <- max_delay
     }
+    if (is.null(cause_var_embedding_list)) {
+      n_ssr_record <- 1
+    } else {
+      n_ssr_record <- nrow(cause_var_embedding_list)
+    }
     # Record parameters
     mdr_res$uic_res <- uic_res
     mdr_res$top_embeddings <- top_multiview_res
@@ -303,7 +308,7 @@ s_map_mdr <- function(block,
                                 max_delay = max_delay_record,
                                 uic_method = uic_method_record,
                                 use_all_lag = use_all_lag,
-                                n_ssr = nrow(cause_var_embedding_list),
+                                n_ssr = n_ssr_record,
                                 k = nrow(top_multiview_res),
                                 evaluate_by = evaluate_by,
                                 theta = theta,
