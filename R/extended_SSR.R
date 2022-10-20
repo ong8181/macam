@@ -8,6 +8,7 @@
 #' @param lib_column Numeric. Indicates library column
 #' @param num_neighbors Numeric. The number of nearest neighbors.
 #' @param theta Numeric. Weighing function for S-map.
+#' @param dist_w Matrix. Distance matrix used to calculate weights for S-map. Implemented for MDR S-map (Chang et al. 2021) Ecology Letters. If `NULL`, then weights are calculated based on Euclidean distance.
 #' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
 #' @param lambda Numeric. Specify the strength of penalty in the regularization.
 #' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
@@ -31,8 +32,8 @@ extended_lnlp <- function(block_time,
                           target_column = 1,
                           lib_column = 1:NCOL(block_time),
                           num_neighbors = NCOL(block_time) + 1,
-                          dist_w = NULL,
                           theta = 0,
+                          dist_w = NULL,
                           #method = "s-map", # currently "simplex" option cannot be used
                           regularized = FALSE,
                           lambda = NULL,

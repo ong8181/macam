@@ -5,6 +5,7 @@
 #' @param lib_indices Library index.
 #' @param pred_indices Prediction index.
 #' @param theta Numeric. Weighing function for S-map.
+#' @param dist_w Matrix. Distance matrix used to calculate weights for S-map. Implemented for MDR S-map (Chang et al. 2021) Ecology Letters. If `NULL`, then weights are calculated based on Euclidean distance.
 #' @param regularized Logical If `TRUE`, regularized S-map will be performed.
 #' @param lambda Numeric. Specify the strength of penalty in the regularization.
 #' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
