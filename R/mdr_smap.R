@@ -122,7 +122,11 @@ s_map_mdr <- function(block,
       } else {
         stop("Specify valid uic_method: \"optimal\" or \"marginal\"")
       }
+      ################################################
+      #### Currently only the strongest tp is selected
+      #### Might be changed in future
       uic_res[y_i, ] <- uic_xy[which.max(uic_xy$te),]
+      ################################################
       ## Output message
       time_used <- (proc.time() - time_start)[3]
       if (!silent) {
