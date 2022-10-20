@@ -247,17 +247,28 @@ s_map_mdr <- function(block,
                                     glmnet_parallel = glmnet_parallel,
                                     save_smap_coefficients = save_smap_coefficients)
 
+    # Prepare recording parameters
+    if (is.null(lambda)) lambda <- "NULL"
+    if (is.null(alpha)) alpha <- "NULL"
+    if (analysis_flow == "mdr") {
+      uic_method_record <- "NULL"
+    } else {
+      uic_method_record <- uic_method
+    }
+    if (is.null(max_delay)) {
+      max_delay_record <- "NULL"
+    } else {
+      max_delay_record <- max_delay
+    }
     # Record parameters
     mdr_res$uic_res <- uic_res
     mdr_res$top_embeddings <- top_multiview_res
     mdr_res$multiview_dist <- multiview_dist
-    ## Convert class
-    if (is.null(lambda)) lambda <- "NULL"
-    if (is.null(alpha)) alpha <- "NULL"
     mdr_res$parms <- data.frame(n_lib = (lib[2]-lib[1]+1),
                                 n_pred = (pred[2]-pred[1]+1),
                                 E_var = Ex,
-                                uic_method = uic_method,
+                                max_delay = max_delay_record,
+                                uic_method = uic_method_record,
                                 n_ssr = nrow(cause_var_embedding_list),
                                 k = nrow(top_multiview_res),
                                 evaluate_by = evaluate_by,
