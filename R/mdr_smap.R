@@ -88,11 +88,12 @@ s_map_mdr <- function(block,
   # Identify causal relationship using rUIC
   # ---------------------------------------------------- #
   # Rearrange the column order
-  block <- dplyr::select(block, effect_var, dplyr::everything())
+  block <- dplyr::select(block, tidyselect::all_of(effect_var), dplyr::everything())
 
   # Determining best embedding dimension (Univariate simplex)
   simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
   Ex <- simp_x[which.min(simp_x$rmse),"E"]
+  if (!silent) message(sprintf("Note: E of the effect variable = %s", Ex))
 
   if (analysis_flow == "uic+mdr" | analysis_flow == "uic") {
     ## Prepare an object to store the output
@@ -139,10 +140,10 @@ s_map_mdr <- function(block,
 
     ## Make lagged block that includes all variables with a specific tp
     if (!is.null(max_delay)) {
-      block_lagged <- rEDM::make_block(block[,effect_var], max_lag = max_delay + 1)[,-1]
+      block_lagged <- data.frame(rEDM::make_block(block[,effect_var], max_lag = max_delay + 1)[,-1])
       colnames(block_lagged) <- sprintf("%s_tp%d", effect_var, seq(0, - max_delay, by = -1))
     } else {
-      block_lagged <- rEDM::make_block(block[,effect_var], max_lag = Ex)[,-1]
+      block_lagged <- data.frame(rEDM::make_block(block[,effect_var], max_lag = Ex)[,-1])
       colnames(block_lagged) <- sprintf("%s_tp%d", effect_var, seq(0, - (Ex-1), by = -1))
     }
 
@@ -162,9 +163,9 @@ s_map_mdr <- function(block,
 
     if (n_ssr < nrow(potential_embeddings_list)) {
       embedding_idx <- sample(1:nrow(potential_embeddings_list), n_ssr)
-      cause_var_embedding_list <- potential_embeddings_list[embedding_idx,]
+      cause_var_embedding_list <- matrix(potential_embeddings_list[embedding_idx,], ncol = ncol(potential_embeddings_list))
     } else {
-      cause_var_embedding_list <- potential_embeddings_list
+      cause_var_embedding_list <- matrix(potential_embeddings_list, ncol = ncol(potential_embeddings_list))
     }
 
 
@@ -255,6 +256,7 @@ s_map_mdr <- function(block,
     if (is.null(alpha)) alpha <- "NULL"
     mdr_res$parms <- data.frame(n_lib = (lib[2]-lib[1]+1),
                                 n_pred = (pred[2]-pred[1]+1),
+                                E_var = Ex,
                                 uic_method = uic_method,
                                 n_ssr = nrow(cause_var_embedding_list),
                                 k = nrow(top_multiview_res),
@@ -266,7 +268,7 @@ s_map_mdr <- function(block,
                                 random_seed = random_seed)
 
     # Output notes
-    if (!silent) message("This function is a beta version and multiple validations are ongoing.")
+    if (!silent) message("\nThis function is a beta version and multiple validations are ongoing.")
 
     # Return results
     return(mdr_res)

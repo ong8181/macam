@@ -32,7 +32,8 @@ Imports:
     stringr,
     tseriesChaos,
     utils,
-    vegan
+    vegan,
+    tidyselect
 LinkingTo: 
     Rcpp
 Suggests: 
