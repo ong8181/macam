@@ -9,6 +9,7 @@ s_map_mdr(
   effect_var,
   lib = c(1, nrow(block)),
   pred = lib,
+  E_var = NULL,
   E_range = 0:10,
   tp = 1,
   tp_range = -4:4,
@@ -37,6 +38,8 @@ s_map_mdr(
 \item{lib}{Numeric vector. Library indices.}
 
 \item{pred}{Numeric vector. Prediction indices.}
+
+\item{E_var}{Numeric. If specified, \code{E_var} is used as an optimal embedding dimension of the effect variable. If \code{NULL}, \code{rUIC::simplex()} and \code{E_range} is used to determine the optimal embedding dimension. Default is \code{NULL}.}
 
 \item{E_range}{Numeric. Embedding dimensions that will be tested.}
 

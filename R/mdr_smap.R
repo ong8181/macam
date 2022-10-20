@@ -4,6 +4,7 @@
 #' @param effect_var Character. Column name that indicates effect variable.
 #' @param lib Numeric vector. Library indices.
 #' @param pred Numeric vector. Prediction indices.
+#' @param E_var Numeric. If specified, `E_var` is used as an optimal embedding dimension of the effect variable. If `NULL`, `rUIC::simplex()` and `E_range` is used to determine the optimal embedding dimension. Default is `NULL`.
 #' @param E_range Numeric. Embedding dimensions that will be tested.
 #' @param tp Numeric. Forecasting time ahead.
 #' @param tp_range Numeric. `tp` tested for UIC.
@@ -32,6 +33,7 @@ s_map_mdr <- function(block,
                       effect_var,
                       lib = c(1, nrow(block)),
                       pred = lib,
+                      E_var = NULL,
                       E_range = 0:10,
                       tp = 1,
                       tp_range = -4:4,
@@ -91,8 +93,12 @@ s_map_mdr <- function(block,
   block <- dplyr::select(block, tidyselect::all_of(effect_var), dplyr::everything())
 
   # Determining best embedding dimension (Univariate simplex)
-  simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
-  Ex <- simp_x[which.min(simp_x$rmse),"E"]
+  if (is.null(E_var)) {
+    simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
+    Ex <- simp_x[which.min(simp_x$rmse),"E"]
+  } else {
+    Ex <- E_var
+  }
   if (!silent) message(sprintf("Note: E of the effect variable = %s", Ex))
 
   if (analysis_flow == "uic+mdr" | analysis_flow == "uic") {
