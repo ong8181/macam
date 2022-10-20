@@ -221,7 +221,7 @@ s_map_mdr <- function(block,
     colnames(multiview_res) <- multiview_colnames
 
     ## Main loop of randomized simplex projections
-    for (i in 1:nrow(cause_var_embedding_list)) {
+    for (i in 1:nrow_res) {
       ## Choose actual embedding ids (id = 1 is always a target column)
       if (nrow_res > 1) {multiview_idx <- c(1, cause_var_embedding_list[i,])} else {multiview_idx <- 1}
       ## Perform simplex projection
