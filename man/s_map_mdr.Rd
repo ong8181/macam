@@ -12,13 +12,14 @@ s_map_mdr(
   E_var = NULL,
   E_range = 0:10,
   tp = 1,
-  tp_range = -4:4,
+  tp_range = -4:0,
   uic_method = "optimal",
   uic_res = NULL,
   analysis_flow = "uic+mdr",
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
   evaluate_by = "rho",
+  use_all_lag = FALSE,
   max_delay = NULL,
   theta = 0,
   regularized = FALSE,
@@ -33,7 +34,7 @@ s_map_mdr(
 \arguments{
 \item{block}{Data.frame contains time series data.}
 
-\item{effect_var}{Character. Column name that indicates effect variable.}
+\item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
 
 \item{lib}{Numeric vector. Library indices.}
 
@@ -58,6 +59,8 @@ s_map_mdr(
 \item{k}{Numeric. The number of embeddings used to calculate ensemble distance.}
 
 \item{evaluate_by}{Character. Specify the criteria used to select the top k-th embeddings. Currently only \code{rho} is supported.}
+
+\item{use_all_lag}{Logical. If \code{TRUE}, use all lagged variables (< max_lag or E_var) of the causal variable. For example, if a variable \code{A} at time lag \code{-2} is causal and if \code{max_lag = 3}, then \code{A_tp-2}, \code{A_tp-3}, \code{A_tp-4}, and \code{A_tp-5} will be used for the multiview embedding.}
 
 \item{max_delay}{Numeric. The maximum number of delay to be used. Default is the optimal embedding dimension (E) of \code{effect_var} minus 1. This applies only to \code{effect_var}. E of potential causal variables and their delays are determiend by UIC.}
 

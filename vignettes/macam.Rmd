@@ -120,7 +120,7 @@ tax_table(ps_tax_sum)[,"rep_tax"] %>%
 ```
 
 ## Time series analysis
-### `s_map_rgl()`
+### `s_map_rgl()` and `s_map_mdr()`
 ```{r, eval = FALSE}
 # Load library
 library(rEDM)
@@ -157,6 +157,9 @@ y1_ridge$stats$rmse; y1_lasso$stats$rmse
 #block_y1 <- rEDM::make_block(y1, max_lag = Ey1)[,2:(Ey1+1)]
 #y1_ridge <- extende_lnlp(block_y1, theta = 0.1, lambda = 0.1,
 #                       regularized = T, alpha = 0, random_seed = 1234)
+
+# s_map_mdr()
+#mdr_res <- s_map_mdr(data_4sp, colnames(data_4sp)[1])
 
 ```
 

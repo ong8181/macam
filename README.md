@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This pacakge is a collection of miscellaneous functions for ecological studies.
+This package is a collection of miscellaneous functions for ecological studies.
 
 ## License
 See LICENSE.
@@ -38,6 +38,7 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - `taxa_name_summarize()`: Summarize taxa names in phyloseq object for visualization purpose.
 
 ### Time series analysis
+- `s_map_mdr()`: Perform the MDR S-map in [Chang et al. (2021)](https://doi.org/10.1111/ele.13897).
 - `s_map_rgl()`: Perform the regularized S-map in [Cenci et al. (2019)](https://doi.org/10.1111/2041-210X.13150). A wrapper function of `extended_lnlp()`.
 - `extended_lnlp()`: A generalized function for the regularized S-map. For the multivariate S-map, please use this function.
 - `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series (see [Thiel et al. 2006](https://doi.org/10.1209/epl/i2006-10147-0)).
