@@ -189,13 +189,17 @@ s_map_mdr <- function(block,
     }
 
     ## Generate embedding list using sample() function
-    potential_embeddings_list <- t(utils::combn(valid_idx, Ex-1, simplify = TRUE))
+    if (Ex > 1) {
+      potential_embeddings_list <- t(utils::combn(valid_idx, Ex-1, simplify = TRUE))
 
-    if (n_ssr < nrow(potential_embeddings_list)) {
-      embedding_idx <- sample(1:nrow(potential_embeddings_list), n_ssr)
-      cause_var_embedding_list <- matrix(potential_embeddings_list[embedding_idx,], ncol = ncol(potential_embeddings_list))
+      if (n_ssr < nrow(potential_embeddings_list)) {
+        embedding_idx <- sample(1:nrow(potential_embeddings_list), n_ssr)
+        cause_var_embedding_list <- matrix(potential_embeddings_list[embedding_idx,], ncol = ncol(potential_embeddings_list))
+      } else {
+        cause_var_embedding_list <- matrix(potential_embeddings_list, ncol = ncol(potential_embeddings_list))
+      }
     } else {
-      cause_var_embedding_list <- matrix(potential_embeddings_list, ncol = ncol(potential_embeddings_list))
+      cause_var_embedding_list <- NULL
     }
 
 
@@ -212,15 +216,14 @@ s_map_mdr <- function(block,
                             "const_pred_rmse",
                             "const_pred_perc",
                             "const_p_val")
-    multiview_res <- data.frame(matrix(NA,
-                                       ncol = length(multiview_colnames),
-                                       nrow = nrow(cause_var_embedding_list)))
+    if (is.null(cause_var_embedding_list)) {nrow_res <- 1} else {nrow_res <- nrow(cause_var_embedding_list)}
+    multiview_res <- data.frame(matrix(NA, ncol = length(multiview_colnames), nrow = nrow_res))
     colnames(multiview_res) <- multiview_colnames
 
     ## Main loop of randomized simplex projections
     for (i in 1:nrow(cause_var_embedding_list)) {
-      ## Choose actual embedding ids (id = 1 is always a tarted column)
-      multiview_idx <- c(1, cause_var_embedding_list[i,])
+      ## Choose actual embedding ids (id = 1 is always a target column)
+      if (nrow_res > 1) {multiview_idx <- c(1, cause_var_embedding_list[i,])} else {multiview_idx <- 1}
       ## Perform simplex projection
       multiview_res[i,] <- rEDM::block_lnlp(block_multiview[,multiview_idx],
                                             lib = c(1, nrow(block_multiview)),
