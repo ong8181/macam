@@ -250,8 +250,11 @@ s_map_mdr <- function(block,
     mdr_res$uic_res <- uic_res
     mdr_res$top_embeddings <- top_multiview_res
     mdr_res$multiview_dist <- multiview_dist
-    mdr_res$parms <- data.frame(n_lib = lib[2]-lib[1]+1,
-                                n_pred = pred[2]-pred[1]+1,
+    ## Convert class
+    if (is.null(lambda)) lambda <- "NULL"
+    if (is.null(alpha)) alpha <- "NULL"
+    mdr_res$parms <- data.frame(n_lib = (lib[2]-lib[1]+1),
+                                n_pred = (pred[2]-pred[1]+1),
                                 uic_method = uic_method,
                                 n_ssr = nrow(cause_var_embedding_list),
                                 k = nrow(top_multiview_res),
