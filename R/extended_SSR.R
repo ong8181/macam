@@ -1,8 +1,8 @@
 #' @title Perform regularized S-map using a generalized function
 #' @description \code{extended_lnlp} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution. Multivariate S-map is also supported.
 #' @param block_time Dataframe or matrix. Original time series.
-#' @param lib Library indices.
-#' @param pred Prediction indices.
+#' @param lib Numeric vector. Library indices.
+#' @param pred Numeric vector. Prediction indices.
 #' @param tp Forecasting time ahead.
 #' @param target_column Numeric. Indicates target column
 #' @param lib_column Numeric. Indicates library column
@@ -21,6 +21,10 @@
 #'    \code{stats} \tab  Statistics. \cr
 #'    \tab \cr
 #'    \code{smap_coefficients} \tab  S-map coefficients \cr
+#' }
+#' @details
+#' \itemize{
+#'  \item{Cenci, S, Sugihara, G, Saavedra, S. Regularized S-map for inference and forecasting with noisy ecological time series. Methods Ecol Evol. 2019; 10: 650– 660. https://doi.org/10.1111/2041-210X.13150}
 #' }
 #' @export
 #' @examples

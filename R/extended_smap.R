@@ -14,6 +14,10 @@
 #' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
 #' @return A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
 #' @noRd
+#' @details
+#' \itemize{
+#'  \item{Cenci, S, Sugihara, G, Saavedra, S. Regularized S-map for inference and forecasting with noisy ecological time series. Methods Ecol Evol. 2019; 10: 650– 660. https://doi.org/10.1111/2041-210X.13150}
+#' }
 #' @keywords internal
 extended_smap <- function(vectors,
                           target,

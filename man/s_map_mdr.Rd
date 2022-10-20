@@ -7,14 +7,22 @@
 s_map_mdr(
   block,
   effect_var,
-  E = 0:10,
-  tp = -4:4,
+  lib = 1:nrow(block),
+  pred = lib,
+  E_range = 0:10,
+  tp = 1,
+  tp_range = -4:4,
   uic_method = "optimal",
   only_uic = FALSE,
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
   evaluate_by = "rho",
   max_delay = 2,
+  theta = 0,
+  regularized = FALSE,
+  lambda = NULL,
+  alpha = NULL,
+  glmnet_parallel = FALSE,
   save_smap_coefficients = FALSE,
   random_seed = 1234
 )
@@ -24,9 +32,15 @@ s_map_mdr(
 
 \item{effect_var}{Character. Column name that indicates effect variable.}
 
-\item{E}{Numeric. Embedding dimensions that will be tested.}
+\item{lib}{Numeric vector. Library indices.}
+
+\item{pred}{Numeric vector. Prediction indices.}
+
+\item{E_range}{Numeric. Embedding dimensions that will be tested.}
 
 \item{tp}{Numeric. Forecasting time ahead.}
+
+\item{tp_range}{Numeric. \code{tp} tested for UIC.}
 
 \item{uic_method}{Character. Specify UIC method. \code{optimal} or \code{marginal}. See https://github.com/yutakaos/rUIC for detail.}
 
@@ -39,6 +53,16 @@ s_map_mdr(
 \item{evaluate_by}{Character. Specify the criteria used to select the top k-th embeddings. Currently only \code{rho} is supported.}
 
 \item{max_delay}{Numeric. The maximum number of delay to be used. This applies only to \code{effect_var}, and this may equal to \code{E-1}. Potential causal variables and their delays are determiend by UIC.}
+
+\item{theta}{Numeric. Weighing function for S-map.}
+
+\item{regularized}{Logical If \code{TRUE}, regularized S-map will be performed. If \code{FALSE}, the normal S-map will be performed. Please use \code{rEDM::s_map} function.}
+
+\item{lambda}{Numeric. Specify the strength of penalty in the regularization.}
+
+\item{alpha}{Numeric. \code{alpha = 0} is the ridge regression, \code{alpha = 1} is the lasso regression, and \verb{0 < alpha < 1} is an elastic net.}
+
+\item{glmnet_parallel}{Logical. If TRUE, the computation will be parallel (currently, experimental).}
 
 \item{save_smap_coefficients}{Logical. If \code{TRUE}, S-map coefficients will be saved.}
 

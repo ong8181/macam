@@ -2,14 +2,22 @@
 #' @description \code{s_map_mdr} performs MDR S-map introduced in Chang et al. (2021) Ecology Letters.
 #' @param block Data.frame contains time series data.
 #' @param effect_var Character. Column name that indicates effect variable.
-#' @param E Numeric. Embedding dimensions that will be tested.
+#' @param lib Numeric vector. Library indices.
+#' @param pred Numeric vector. Prediction indices.
+#' @param E_range Numeric. Embedding dimensions that will be tested.
 #' @param tp Numeric. Forecasting time ahead.
+#' @param tp_range Numeric. `tp` tested for UIC.
 #' @param uic_method Character. Specify UIC method. `optimal` or `marginal`. See https://github.com/yutakaos/rUIC for detail.
 #' @param only_uic Logical. If `TRUE`, only UIC results will be returned.
 #' @param n_ssr Numeric. The total number of embeddings examined.
 #' @param k Numeric. The number of embeddings used to calculate ensemble distance.
 #' @param evaluate_by Character. Specify the criteria used to select the top k-th embeddings. Currently only `rho` is supported.
 #' @param max_delay Numeric. The maximum number of delay to be used. This applies only to `effect_var`, and this may equal to `E-1`. Potential causal variables and their delays are determiend by UIC.
+#' @param theta Numeric. Weighing function for S-map.
+#' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
+#' @param lambda Numeric. Specify the strength of penalty in the regularization.
+#' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
+#' @param glmnet_parallel Logical. If TRUE, the computation will be parallel (currently, experimental).
 #' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
 #' @param random_seed Numeric. Random seed.
 #' @return A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
@@ -18,10 +26,24 @@
 #'  \item{Chang, C.-W., Miki, T., Ushio, M., Ke, P.-J., Lu, H.-P., Shiah, F.-K. & et al. (2021) Reconstructing large interaction networks from empirical time series data. Ecology Letters, 24, 2763– 2774. https://doi.org/10.1111/ele.13897}
 #' }
 #' @export
-s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
-                      uic_method = "optimal", only_uic = FALSE,
-                      n_ssr = 10000, k = floor(sqrt(n_ssr)),
-                      evaluate_by = "rho", max_delay = 2,
+s_map_mdr <- function(block,
+                      effect_var,
+                      lib = 1:nrow(block),
+                      pred = lib,
+                      E_range = 0:10,
+                      tp = 1,
+                      tp_range = -4:4,
+                      uic_method = "optimal",
+                      only_uic = FALSE,
+                      n_ssr = 10000,
+                      k = floor(sqrt(n_ssr)),
+                      evaluate_by = "rho",
+                      max_delay = 2,
+                      theta = 0,
+                      regularized = FALSE,
+                      lambda = NULL,
+                      alpha = NULL,
+                      glmnet_parallel = FALSE,
                       save_smap_coefficients = FALSE,
                       random_seed = 1234) {
   # Set random seed
@@ -40,14 +62,14 @@ s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
   if (evaluate_by != "rho") {
     stop("\"mae\" or \"rmse\" are not currently supported for \"evaluated_by\". Please use \"rho\" instead.")
   }
-  if (!is.numeric(E) | !is.numeric(tp)) stop("\"E\" and \"tp\" should be numeric.")
+  if (!is.numeric(E_range) | !is.numeric(tp_range)) stop("\"E_range\" and \"tp_range\" should be numeric.")
 
 
   # ---------------------------------------------------- #
   # Identify causal relationship using rUIC
   # ---------------------------------------------------- #
   # Determining best embedding dimension (Univariate simplex)
-  simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E, tau = 1, tp = 1)
+  simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
   Ex <- simp_x[which.min(simp_x$rmse),"E"]
 
   ## Prepare an object to store the output
@@ -60,10 +82,10 @@ s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
     time_start <- proc.time()
     if (uic_method == "optimal") {
       # Testing the effect of "y_i" on "effect_var" using uic.optimal()
-      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E, tau = 1, tp = tp)
+      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range)
     } else if (uic_method == "marginal") {
       # Testing the effect of "y_i" on "effect_var" using uic.marginal()
-      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E, tau = 1, tp = tp)
+      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range)
     } else {
       stop("Specify valid uic_method: \"optimal\" or \"marginal\"")
     }
@@ -142,7 +164,8 @@ s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
                                           pred = c(1, nrow(block_multiview)),
                                           method = "simplex",
                                           silent = TRUE,
-                                          tp = 1, target_column = 1)
+                                          tp = tp,
+                                          target_column = 1)
     ## Replace embedding id
     multiview_res[i,]$embedding <- stringr::str_sub(stringr::str_c(multiview_idx, ",", collapse = " "), end = -2)
   }
@@ -177,14 +200,18 @@ s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
   # Perform MDR S-map using macam::extended_lnlp
   # ---------------------------------------------------- #
   mdr_res <- macam::extended_lnlp(block_multiview,
-                                  lib = 1:nrow(block_multiview),
-                                  pred = 1:nrow(block_multiview),
+                                  #lib = 1:nrow(block_multiview),
+                                  #pred = 1:nrow(block_multiview),
+                                  lib = lib,
+                                  pred = pred,
                                   target_column = 1,
+                                  tp = tp,
                                   dist_w = multiview_dist,
-                                  theta = 1,
-                                  regularized = TRUE,
-                                  lambda = 0.1,
-                                  alpha = 0,
+                                  theta = theta,
+                                  regularized = regularized,
+                                  lambda = lambda,
+                                  alpha = alpha,
+                                  glmnet_parallel = glmnet_parallel,
                                   save_smap_coefficients = save_smap_coefficients)
 
   # Return results

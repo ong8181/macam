@@ -25,9 +25,9 @@ extended_lnlp(
 \arguments{
 \item{block_time}{Dataframe or matrix. Original time series.}
 
-\item{lib}{Library indices.}
+\item{lib}{Numeric vector. Library indices.}
 
-\item{pred}{Prediction indices.}
+\item{pred}{Numeric vector. Prediction indices.}
 
 \item{tp}{Forecasting time ahead.}
 
@@ -64,6 +64,11 @@ A list containing:\tabular{ll}{
 }
 \description{
 \code{extended_lnlp} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution. Multivariate S-map is also supported.
+}
+\details{
+\itemize{
+\item{Cenci, S, Sugihara, G, Saavedra, S. Regularized S-map for inference and forecasting with noisy ecological time series. Methods Ecol Evol. 2019; 10: 650– 660. https://doi.org/10.1111/2041-210X.13150}
+}
 }
 \examples{
 # extended_lnlp()
