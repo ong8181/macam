@@ -30,7 +30,7 @@
 #' @export
 s_map_mdr <- function(block,
                       effect_var,
-                      lib = 1:nrow(block),
+                      lib = c(1, nrow(block)),
                       pred = lib,
                       E_range = 0:10,
                       tp = 1,
@@ -91,7 +91,7 @@ s_map_mdr <- function(block,
   block <- dplyr::select(block, effect_var, dplyr::everything())
 
   # Determining best embedding dimension (Univariate simplex)
-  simp_x <- rUIC::simplex(block[,effect_var], lib_var = effect_var, E = E_range, tau = 1, tp = 1)
+  simp_x <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
   Ex <- simp_x[which.min(simp_x$rmse),"E"]
 
   if (analysis_flow == "uic+mdr" | analysis_flow == "uic") {

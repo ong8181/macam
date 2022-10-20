@@ -36,15 +36,6 @@ extended_smap <- function(vectors,
 {
   #require(glmnet)
   #no_parallel = glmnet_parallel
-  # vectors = block_multiview
-  # lib_indices = 1:nrow(block_multiview)
-  # pred_indices = 1:nrow(block_multiview)
-  # target_column = 1
-  # dist_w = block_multiview
-  # theta = 1
-  # #dist_w = multiview_dist
-  # regularized = TRUE
-  # save_smap_coefficients = TRUE
 
   # set E here
   E <- NCOL(vectors)

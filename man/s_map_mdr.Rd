@@ -7,7 +7,7 @@
 s_map_mdr(
   block,
   effect_var,
-  lib = 1:nrow(block),
+  lib = c(1, nrow(block)),
   pred = lib,
   E_range = 0:10,
   tp = 1,
