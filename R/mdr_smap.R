@@ -170,7 +170,7 @@ s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
   for (i in 1:nrow(top_multiview_res)) {
     top_multiview_ids <- stringr::str_split(top_multiview_res$embedding[i], pattern = ",")[[1]] %>%
       as.numeric
-    multiview_dist <- multiview_dist + w_multi[i] * as.matrix(dist(block_multiview[,top_multiview_ids]))
+    multiview_dist <- multiview_dist + w_multi[i] * as.matrix(stats::dist(block_multiview[,top_multiview_ids]))
   }
 
 

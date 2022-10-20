@@ -24,6 +24,8 @@ Imports:
     purrr,
     Rcpp,
     rstudioapi,
+    rEDM,
+    rUIC,
     scales,
     ShortRead,
     stats,

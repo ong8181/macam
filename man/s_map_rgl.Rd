@@ -11,8 +11,8 @@ s_map_rgl(
   pred = lib,
   tp = 1,
   num_neighbors = length(ts_data) + 1,
-  dist_w = NULL,
   theta = 0,
+  dist_w = NULL,
   regularized = FALSE,
   lambda = NULL,
   alpha = 0,
@@ -35,6 +35,8 @@ s_map_rgl(
 \item{num_neighbors}{Numeric. The number of nearest neighbors.}
 
 \item{theta}{Numeric. Weighing function for S-map.}
+
+\item{dist_w}{Matrix. Distance matrix used to calculate weights for S-map. Implemented for MDR S-map (Chang et al. 2021) Ecology Letters. If \code{NULL}, then weights are calculated based on Euclidean distance.}
 
 \item{regularized}{Logical If \code{TRUE}, regularized S-map will be performed. If \code{FALSE}, the normal S-map will be performed. Please use \code{rEDM::s_map} function.}
 
