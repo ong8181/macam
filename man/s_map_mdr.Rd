@@ -13,18 +13,20 @@ s_map_mdr(
   tp = 1,
   tp_range = -4:4,
   uic_method = "optimal",
-  only_uic = FALSE,
+  uic_res = NULL,
+  analysis_flow = "uic+mdr",
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
   evaluate_by = "rho",
-  max_delay = 2,
+  max_delay = NULL,
   theta = 0,
   regularized = FALSE,
   lambda = NULL,
-  alpha = NULL,
+  alpha = 0,
   glmnet_parallel = FALSE,
   save_smap_coefficients = FALSE,
-  random_seed = 1234
+  random_seed = 1234,
+  silent = FALSE
 )
 }
 \arguments{
@@ -44,7 +46,9 @@ s_map_mdr(
 
 \item{uic_method}{Character. Specify UIC method. \code{optimal} or \code{marginal}. See https://github.com/yutakaos/rUIC for detail.}
 
-\item{only_uic}{Logical. If \code{TRUE}, only UIC results will be returned.}
+\item{uic_res}{Data.frame. Should contain UIC results. Required if \code{anaysis_flow = "mdr"}. Colnames of \code{uic_res} should be \code{c("E","tau","tp","nn","n_lib","n_pred","rmse","te","pval")}.}
+
+\item{analysis_flow}{Character or numeric. \code{uic} or \code{1} performs UIC analysis only, and \code{mdr} or \code{2} performs MDR S-map only.  \code{uic+mdr} or \code{3} performs UIC + MDR S-map. Default is \code{uic+mdr}.}
 
 \item{n_ssr}{Numeric. The total number of embeddings examined.}
 
@@ -52,7 +56,7 @@ s_map_mdr(
 
 \item{evaluate_by}{Character. Specify the criteria used to select the top k-th embeddings. Currently only \code{rho} is supported.}
 
-\item{max_delay}{Numeric. The maximum number of delay to be used. This applies only to \code{effect_var}, and this may equal to \code{E-1}. Potential causal variables and their delays are determiend by UIC.}
+\item{max_delay}{Numeric. The maximum number of delay to be used. Default is the optimal embedding dimension (E) of \code{effect_var} minus 1. This applies only to \code{effect_var}. E of potential causal variables and their delays are determiend by UIC.}
 
 \item{theta}{Numeric. Weighing function for S-map.}
 
@@ -67,6 +71,8 @@ s_map_mdr(
 \item{save_smap_coefficients}{Logical. If \code{TRUE}, S-map coefficients will be saved.}
 
 \item{random_seed}{Numeric. Random seed.}
+
+\item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
 \value{
 A list that contains predictions, statistics, and S-map coefficients (if \code{save_smap_coefficients = TRUE})
