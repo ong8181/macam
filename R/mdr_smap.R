@@ -8,17 +8,16 @@
 #' @param only_uic Logical. If `TRUE`, only UIC results will be returned.
 #' @param n_ssr Numeric. The total number of embeddings examined.
 #' @param k Numeric. The number of embeddings used to calculate ensemble distance.
-#' @param evaluated_by Character. Specify the criteria used to select the top k-th embeddings. Currently only `rho` is supported.
+#' @param evaluate_by Character. Specify the criteria used to select the top k-th embeddings. Currently only `rho` is supported.
 #' @param max_delay Numeric. The maximum number of delay to be used. This applies only to `effect_var`, and this may equal to `E-1`. Potential causal variables and their delays are determiend by UIC.
 #' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
 #' @param random_seed Numeric. Random seed.
 #' @return A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
-#' @noRd
-#' @keywords internal
 #' @details
 #' \itemize{
 #'  \item{Chang, C.-W., Miki, T., Ushio, M., Ke, P.-J., Lu, H.-P., Shiah, F.-K. & et al. (2021) Reconstructing large interaction networks from empirical time series data. Ecology Letters, 24, 2763– 2774. https://doi.org/10.1111/ele.13897}
 #' }
+#' @export
 s_map_mdr <- function(block, effect_var, E = 0:10, tp = -4:4,
                       uic_method = "optimal", only_uic = FALSE,
                       n_ssr = 10000, k = floor(sqrt(n_ssr)),
