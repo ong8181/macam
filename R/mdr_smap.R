@@ -76,7 +76,7 @@ uic_across <- function(block,
   }
 
   # Return results
-  return(uic_res)
+  return(as.data.frame(uic_res))
 }
 
 
@@ -138,8 +138,17 @@ make_block_mvd <- function (block,
     # Select tp with the strongest influence from each causal variable
     # (te is used as a criterion)
     # ---------------------------------------------------- #
-    uic_res <- uic_res %>% dplyr::group_by(dplyr::across("cause_var")) %>%
-      dplyr::filter(dplyr::across("te") == max(dplyr::across("te")))
+    for (cause_i in unique(uic_res$cause_var)) {
+      uic_res_tmp <- uic_res[uic_res$cause_var == cause_i,]
+      if (!exists("uic_res_new")) {
+        uic_res_new <- uic_res_tmp[which.max(uic_res_tmp[,"te"]),]
+      } else {
+        uic_res_new <- rbind(uic_res_new, uic_res_tmp[which.max(uic_res_tmp[,"te"]),])
+      }
+    }
+    # Replace "uic_res"
+    uic_res <- uic_res_new
+    #uic_res <- uic_res %>% dplyr::group_by(.data$cause_var) %>% dplyr::filter(.data$te == max(.data$te))
     for (i in 1:nrow(uic_res)) {
       block_new <- dplyr::lag(block[,uic_res[i,"cause_var"]], n = abs(uic_res[i,"tp"])) %>% data.frame
       colnames(block_new) <- sprintf("%s_tp%s", uic_res[i,"cause_var"], uic_res[i,"tp"])
