@@ -41,7 +41,6 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - `s_map_rgl()`: Perform the regularized S-map in [Cenci et al. (2019)](https://doi.org/10.1111/2041-210X.13150). A wrapper function of `extended_lnlp()`.
 - `extended_lnlp()`: A generalized function for the regularized S-map. For the multivariate S-map, please use this function.
 - `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series (see [Thiel et al. 2006](https://doi.org/10.1209/epl/i2006-10147-0)).
-
 - `uic_across()`: Perform UIC across columns.
 - `make_block_mvd()`: Generate data.frame for the calculation of multiview distance
 - `compute_mvd()`: Compute multiview distance
