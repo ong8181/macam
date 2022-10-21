@@ -2,67 +2,33 @@
 % Please edit documentation in R/mdr_smap.R
 \name{s_map_mdr}
 \alias{s_map_mdr}
-\title{A wrapper function for MDR S-map}
+\title{A function for MDR S-map}
 \usage{
 s_map_mdr(
-  block,
-  effect_var,
-  lib = c(1, nrow(block)),
+  block_mvd,
+  dist_w,
+  lib = c(1, nrow(block_mvd)),
   pred = lib,
-  E_var = NULL,
-  E_range = 0:10,
   tp = 1,
-  tp_range = -4:0,
-  uic_method = "optimal",
-  uic_res = NULL,
-  analysis_flow = "uic+mdr",
-  n_ssr = 10000,
-  k = floor(sqrt(n_ssr)),
-  evaluate_by = "rho",
-  use_all_lag = FALSE,
-  max_delay = NULL,
-  theta = 0,
+  theta = 8,
   regularized = FALSE,
-  lambda = NULL,
+  lambda = 0,
   alpha = 0,
   glmnet_parallel = FALSE,
   save_smap_coefficients = FALSE,
-  random_seed = 1234,
-  silent = FALSE
+  random_seed = 1234
 )
 }
 \arguments{
-\item{block}{Data.frame contains time series data.}
+\item{block_mvd}{Data.frame contains time series data. The first column should be the target column.}
 
-\item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
+\item{dist_w}{Matrix. Multiview disntance matrix. Usually this is the output of \code{compute_mvd()}.}
 
 \item{lib}{Numeric vector. Library indices.}
 
 \item{pred}{Numeric vector. Prediction indices.}
 
-\item{E_var}{Numeric. If specified, \code{E_var} is used as an optimal embedding dimension of the effect variable. If \code{NULL}, \code{rUIC::simplex()} and \code{E_range} is used to determine the optimal embedding dimension. Default is \code{NULL}.}
-
-\item{E_range}{Numeric. Embedding dimensions that will be tested.}
-
 \item{tp}{Numeric. Forecasting time ahead.}
-
-\item{tp_range}{Numeric. \code{tp} tested for UIC.}
-
-\item{uic_method}{Character. Specify UIC method. \code{optimal} or \code{marginal}. See https://github.com/yutakaos/rUIC for detail.}
-
-\item{uic_res}{Data.frame. Should contain UIC results. Required if \code{anaysis_flow = "mdr"}. Colnames of \code{uic_res} should be \code{c("E","tau","tp","nn","n_lib","n_pred","rmse","te","pval")}.}
-
-\item{analysis_flow}{Character or numeric. \code{uic} or \code{1} performs UIC analysis only, and \code{mdr} or \code{2} performs MDR S-map only.  \code{uic+mdr} or \code{3} performs UIC + MDR S-map. Default is \code{uic+mdr}.}
-
-\item{n_ssr}{Numeric. The total number of embeddings examined.}
-
-\item{k}{Numeric. The number of embeddings used to calculate ensemble distance.}
-
-\item{evaluate_by}{Character. Specify the criteria used to select the top k-th embeddings. Currently only \code{rho} is supported.}
-
-\item{use_all_lag}{Logical. If \code{TRUE}, use all lagged variables (< max_lag or E_var) of the causal variable. For example, if a variable \code{A} at time lag \code{-2} is causal and if \code{max_lag = 3}, then \code{A_tp-2}, \code{A_tp-3}, \code{A_tp-4}, and \code{A_tp-5} will be used for the multiview embedding.}
-
-\item{max_delay}{Numeric. The maximum number of delay to be used. Default is the optimal embedding dimension (E) of \code{effect_var} minus 1. This applies only to \code{effect_var}. E of potential causal variables and their delays are determiend by UIC.}
 
 \item{theta}{Numeric. Weighing function for S-map.}
 
@@ -77,8 +43,6 @@ s_map_mdr(
 \item{save_smap_coefficients}{Logical. If \code{TRUE}, S-map coefficients will be saved.}
 
 \item{random_seed}{Numeric. Random seed.}
-
-\item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
 \value{
 A list that contains predictions, statistics, and S-map coefficients (if \code{save_smap_coefficients = TRUE})
