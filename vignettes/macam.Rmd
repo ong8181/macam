@@ -120,7 +120,7 @@ tax_table(ps_tax_sum)[,"rep_tax"] %>%
 ```
 
 ## Time series analysis
-### `s_map_rgl()` and `s_map_mdr()`
+### `s_map_rgl()`
 ```{r, eval = FALSE}
 # Load library
 library(rEDM)
@@ -130,10 +130,9 @@ packageVersion("rEDM") # v0.7.5
 data(data_4sp)
 
 # Normalize and check model time series
-# Normalize and check model time series
 y1 <- as.numeric(scale(data_4sp[,1]))
 
-# Estimate best embeding dimension
+# Estimate optimal embeding dimension
 simp_res1 <- rEDM::simplex(y1, E = 1:20, silent = T)
 (Ey1 <- simp_res1[which.min(simp_res1$rmse), "E"])
 
@@ -157,9 +156,50 @@ y1_ridge$stats$rmse; y1_lasso$stats$rmse
 #block_y1 <- rEDM::make_block(y1, max_lag = Ey1)[,2:(Ey1+1)]
 #y1_ridge <- extende_lnlp(block_y1, theta = 0.1, lambda = 0.1,
 #                       regularized = T, alpha = 0, random_seed = 1234)
+```
+### MDR S-map
+```{r, eval = FALSE}
+# Load library
+library(rEDM)
+packageVersion("rEDM") # v0.7.5
+library(rUIC)
+packageVersion("rUIC") # v0.1.5
 
-# s_map_mdr()
-#mdr_res <- s_map_mdr(data_4sp, colnames(data_4sp)[1])
+# Load data
+data(data_4sp)
+effect_var <- "Tridentiger.trigonocephalus"
+
+# Step. 1: Estimate optimal embeding dimension
+simp_x <- rUIC::simplex(data_4sp, lib_var = effect_var, E = 0:10, tp = 1)
+Ex <- simp_x[which.min(simp_x$rmse),"E"]
+
+# Step 2: Perform UIC to detect causality
+uic_res <- uic_across(data_4sp, effect_var, E_range = 0:10, tp_range = -4:0)
+
+# Step 3: Make block to calculate multiview distance
+block_mvd <- make_block_mvd(data_4sp, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant")
+
+# Step. 4: Compute multiview distance
+multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
+
+# Step. 5: Do MDR S-map
+mdr_res <- s_map_mdr(block_mvd,
+                     dist_w = multiview_dist,
+                     theta = 8,
+                     regularized = FALSE,
+                     save_smap_coefficients = TRUE)
+mdr_res$stats # rho = 0.40; rmse = 43.57
+
+# Compare with the normal S-map
+smap_res <- rEDM::block_lnlp(data_4sp, target_column = effect_var,
+                 method = "s-map", theta = 8, tp = 1)
+smap_res$rho # rho = 0.34
+smap_res$rmse # rho = 49.29
+
+# An all-in-one wrapper function
+all_res <- s_map_mdr_all(data_4sp, effect_var)
+## Note that include_var = "tp0_only" is used in s_map_mdr_all()
+## And thus, the result is different from the example using step-by-step functions
 
 ```
 
