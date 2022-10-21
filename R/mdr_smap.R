@@ -256,7 +256,6 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
     if (!exists("rand_embed_res")) { rand_embed_res <- rand_embed_res_i } else { rand_embed_res <- rbind(rand_embed_res, rand_embed_res_i)}
   }
 
-
   ## Sort the result based on "evaluated_by"
   rand_embed_res <- rand_embed_res[order(rand_embed_res[,"rho"], decreasing = T),]
   if (k < nrow(rand_embed_res)) {
@@ -267,7 +266,6 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
   }
   # Rename row names
   rownames(top_embed_res) <- 1:nrow(top_embed_res)
-
 
   # ---------------------------------------------------- #
   # Calculate ensemble weights for S-map
@@ -283,7 +281,6 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
     multiview_dist <- multiview_dist + w_multi[i] * as.matrix(stats::dist(block_mvd[,top_embed_ids]))
   }
 
-
   # ---------------------------------------------------- #
   # Return results
   # ---------------------------------------------------- #
@@ -297,9 +294,6 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
     return(all_res)
   }
 }
-
-
-
 
 
 #' @title A function for MDR S-map
@@ -350,6 +344,69 @@ s_map_mdr <- function(block_mvd,
                                   glmnet_parallel = glmnet_parallel,
                                   save_smap_coefficients = save_smap_coefficients)
   # Return results
+  return(mdr_res)
+}
+
+
+
+#' @title A all-in-one wrapper function for MDR S-map
+#' @description \code{s_map_mdr_all} A all-in-one wrapper function for MDR S-map. Detect causality between variables, construct data.frame for multiview embedding, compute multiview distance, and perform MDR S-map. For fine-tuning, use the step-by-step functions such as `compute_mvd()` etc..
+#' @param block Data.frame contains time series data. The first column should be the target column.
+#' @param effect_var Character or Numeric. Column name or index of the effect variable.
+#' @param lib Numeric vector. Library indices.
+#' @param pred Numeric vector. Prediction indices.
+#' @param tp Numeric. Forecasting time ahead.
+#' @param E_range Numeric. Embedding dimensions that will be tested.
+#' @param tp_range Numeric. `tp` tested for UIC.
+#' @param theta Numeric. Weighing function for S-map.
+#' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
+#' @param lambda Numeric. Specify the strength of penalty in the regularization.
+#' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
+#' @param glmnet_parallel Logical. If TRUE, the computation will be parallel (currently, experimental).
+#' @param save_smap_coefficients Logical. If `TRUE`, S-map coefficients will be saved.
+#' @param silent Logical. if `TRUE`, progress message will not be shown.
+#' @param random_seed Numeric. Random seed.
+#' @return A list that contains predictions, statistics, and S-map coefficients (if `save_smap_coefficients = TRUE`)
+#' @export
+s_map_mdr_all <- function (block,
+                           effect_var,
+                           lib = c(1, nrow(block)),
+                           pred = lib,
+                           tp = 1,
+                           E_range = 0:10,
+                           tp_range = -4:0,
+                           theta = 8,
+                           regularized = FALSE,
+                           lambda = 0,
+                           alpha = 0,
+                           glmnet_parallel = FALSE,
+                           save_smap_coefficients = TRUE,
+                           silent = FALSE,
+                           random_seed = 1234) {
+  # Step 1: Determine optimal embedding dimension
+  simp_res <- rUIC::simplex(block, lib_var = effect_var, E = E_range, tau = 1, tp = 1)
+  Ex <- simp_res[which.min(simp_res$rmse),"E"]
+
+  # Step 2: Perform UIC to detect causality
+  uic_res <- uic_across(block, effect_var, E_range = E_range, tp_range = tp_range, silent = silent, random_seed = random_seed)
+
+  # Step 3: Make block to calculate multiview distance
+  block_mvd <- make_block_mvd(block, uic_res, effect_var, E_effect_var = Ex, include_var = "tp0_only")
+
+  # Step. 4: Compute multiview distance
+  multiview_dist <- compute_mvd(block_mvd, effect_var, make_block_method = "rEDM", E = Ex, tp = 1, random_seed = random_seed)
+
+  # Step. 5: Do MDR S-map
+  mdr_res <- s_map_mdr(block_mvd,
+                       dist_w = multiview_dist,
+                       theta = theta,
+                       regularized = regularized,
+                       lambda = lambda,
+                       alpha = alpha,
+                       glmnet_parallel = glmnet_parallel,
+                       save_smap_coefficients = save_smap_coefficients,
+                       random_seed = random_seed)
+
   return(mdr_res)
 }
 
