@@ -91,6 +91,7 @@ uic_across <- function(block,
 #' @param uic_res Data.frame contains UIC results. Usually this is the output of `uic_across()`, but custom data.frame may be usable.
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
 #' @param E_effect_var Numeric. Optimal embedding dimension of the effect variable.
+#' @param cause_var_colname Character. A column name for causal variables in `uic_res`.
 #' @param include_var Character. `all_significant`, `strongest_only`, or `tp0_only`. If `all_significant`, all significantly influencing variables are used for the embedding. If `strongest_only`, tp with the strongest influence for each variable is used. If `tp0_only`, only variables with no time-delay are used.
 #' @param p_threshold Numeric. Random seed.
 #' @return Embedded time series will be returned.
