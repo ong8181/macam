@@ -75,6 +75,10 @@ uic_across <- function(block,
     }
   }
 
+  # Message
+  message("By using `uic_across()` the effect variable is recorded in the column named `effect_var`, while potential causal variables are recorded in the column named `cause_var`.")
+  message("Please note that these column names are used in the subsequent analysis if you use `make_block_mvd()`.")
+
   # Return results
   return(as.data.frame(uic_res))
 }
@@ -95,10 +99,19 @@ make_block_mvd <- function (block,
                             uic_res,
                             effect_var,
                             E_effect_var,
+                            cause_var_colname = "cause_var",
                             include_var = "strongest_only",
                             p_threshold = 0.050) {
   # Retrieve colnames
   x_names <- colnames(block)
+
+  # Check colnames to be used (and critical) in the analysis
+  if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
+  if (effect_var %in% x_names) stop("No 'effect_var' in the block!")
+  if (cause_var_colname %in% colnames(uic_res)) stop("No 'cause_var_colname' in `uic_res`! Please specify the correct colname for causal variables")
+  if ("tp" %in% colnames(uic_res)) stop("'tp' column is required for `uic_res`.")
+  if ("te" %in% colnames(uic_res)) stop("'te' column is required for `uic_res`.")
+  if ("pval" %in% colnames(uic_res)) stop("'pval' column is required for `uic_res`.")
 
   # Check arguments
   if (!all(unique(x_names) == x_names)) stop("\"block\" should have unique column names.")
@@ -108,7 +121,6 @@ make_block_mvd <- function (block,
     stop("\"include_var\" should be \"all_significant\", \"strongest_only\", or \"tp0_only\".")
   }
   if (E_effect_var < 1) stop("\"max_delay_self\" should be >= 1.")
-  if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
 
   # Preparation
   if (include_var == "tp0_only") {
@@ -119,6 +131,7 @@ make_block_mvd <- function (block,
     colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
   }
   # Pre-screening (p & tp)
+  message("UIC results with `tp` <= 0 are removed.")
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
 
   # ---------------------------------------------------- #
@@ -129,8 +142,8 @@ make_block_mvd <- function (block,
     # Select all significant variables
     # ---------------------------------------------------- #
     for (i in 1:nrow(uic_res)) {
-      block_new <- dplyr::lag(block[,uic_res[i,"cause_var"]], n = abs(uic_res[i,"tp"])) %>% data.frame
-      colnames(block_new) <- sprintf("%s_tp%s", uic_res[i,"cause_var"], uic_res[i,"tp"])
+      block_new <- dplyr::lag(block[,uic_res[i, cause_var_colname]], n = abs(uic_res[i,"tp"])) %>% data.frame
+      colnames(block_new) <- sprintf("%s_tp%s", uic_res[i, cause_var_colname], uic_res[i,"tp"])
       block_mvd <- cbind(block_mvd, block_new)
     }
   } else if (include_var == "strongest_only") {
@@ -138,8 +151,8 @@ make_block_mvd <- function (block,
     # Select tp with the strongest influence from each causal variable
     # (te is used as a criterion)
     # ---------------------------------------------------- #
-    for (cause_i in unique(uic_res$cause_var)) {
-      uic_res_tmp <- uic_res[uic_res$cause_var == cause_i,]
+    for (cause_i in unique(uic_res[,cause_var_colname])) {
+      uic_res_tmp <- uic_res[uic_res[,cause_var_colname] == cause_i,]
       if (!exists("uic_res_new")) {
         uic_res_new <- uic_res_tmp[which.max(uic_res_tmp[,"te"]),]
       } else {
@@ -150,16 +163,16 @@ make_block_mvd <- function (block,
     uic_res <- uic_res_new
     #uic_res <- uic_res %>% dplyr::group_by(.data$cause_var) %>% dplyr::filter(.data$te == max(.data$te))
     for (i in 1:nrow(uic_res)) {
-      block_new <- dplyr::lag(block[,uic_res[i,"cause_var"]], n = abs(uic_res[i,"tp"])) %>% data.frame
-      colnames(block_new) <- sprintf("%s_tp%s", uic_res[i,"cause_var"], uic_res[i,"tp"])
+      block_new <- dplyr::lag(block[,uic_res[i,cause_var_colname]], n = abs(uic_res[i,"tp"])) %>% data.frame
+      colnames(block_new) <- sprintf("%s_tp%s", uic_res[i,cause_var_colname], uic_res[i,"tp"])
       block_mvd <- cbind(block_mvd, block_new)
     }
   } else if (include_var == "tp0_only") {
     # ---------------------------------------------------- #
     # Select causal variables with tp = 0
     # ---------------------------------------------------- #
-    block_new <- block[,unique(uic_res$cause_var)] %>% data.frame
-    colnames(block_new) <- sprintf("%s_tp0", unique(uic_res$cause_var))
+    block_new <- block[,unique(uic_res[,cause_var_colname])] %>% data.frame
+    colnames(block_new) <- sprintf("%s_tp0", unique(uic_res[,cause_var_colname]))
     block_mvd <- cbind(block_mvd, block_new)
   }
   # Return results
