@@ -108,11 +108,11 @@ make_block_mvd <- function (block,
 
   # Check colnames to be used (and critical) in the analysis
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
-  if (effect_var %in% x_names) stop("No 'effect_var' in the block!")
-  if (cause_var_colname %in% colnames(uic_res)) stop("No 'cause_var_colname' in `uic_res`! Please specify the correct colname for causal variables")
-  if ("tp" %in% colnames(uic_res)) stop("'tp' column is required for `uic_res`.")
-  if ("te" %in% colnames(uic_res)) stop("'te' column is required for `uic_res`.")
-  if ("pval" %in% colnames(uic_res)) stop("'pval' column is required for `uic_res`.")
+  if (!(effect_var %in% x_names)) stop("No 'effect_var' in the block!")
+  if (!(cause_var_colname %in% colnames(uic_res))) stop("No 'cause_var_colname' in `uic_res`! Please specify the correct colname for causal variables")
+  if (!("tp" %in% colnames(uic_res))) stop("'tp' column is required for `uic_res`.")
+  if (!("te" %in% colnames(uic_res))) stop("'te' column is required for `uic_res`.")
+  if (!("pval" %in% colnames(uic_res))) stop("'pval' column is required for `uic_res`.")
 
   # Check arguments
   if (!all(unique(x_names) == x_names)) stop("\"block\" should have unique column names.")
