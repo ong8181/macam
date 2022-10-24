@@ -9,7 +9,7 @@ rarefy_even_coverage(
   coverage = 0.97,
   remove_not_rarefied = FALSE,
   include_iNEXT_results = FALSE,
-  se = TRUE,
+  se = FALSE,
   nboot = 40,
   knots = 50,
   n_rarefy_iter = 1,

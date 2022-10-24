@@ -20,7 +20,7 @@ rarefy_even_coverage <-  function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
                                   include_iNEXT_results = FALSE,
-                                  se = TRUE,
+                                  se = FALSE,
                                   nboot = 40,       # Only valid if include_rarefaction_curve = TRUE
                                   knots = 50,       # Only valid if include_rarefaction_curve = TRUE
                                   n_rarefy_iter = 1,
