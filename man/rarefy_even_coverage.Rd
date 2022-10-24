@@ -9,6 +9,7 @@ rarefy_even_coverage(
   coverage = 0.97,
   remove_not_rarefied = FALSE,
   include_iNEXT_results = FALSE,
+  se = TRUE,
   nboot = 40,
   knots = 50,
   n_rarefy_iter = 1,
@@ -25,6 +26,8 @@ rarefy_even_coverage(
 \item{remove_not_rarefied}{Logical. If \code{TRUE}, samples of which coverage is lower than the specified coverage will be removed.}
 
 \item{include_iNEXT_results}{Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if \code{TRUE}, computation time will increase. If \code{FALSE}, it returns a rarefied phyloseq object only.}
+
+\item{se}{Logical. Specify whether SE of the rarefaction curve is calculated.}
 
 \item{nboot}{Numeric. Specify \code{nboot} of iNEXT function (valid only if \code{include_iNEXT_results = TRUE}).}
 

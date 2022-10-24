@@ -5,6 +5,7 @@
 #' @param coverage Numeric. Coverage specified by a user (default = 0.97 = 97%).
 #' @param remove_not_rarefied Logical. If `TRUE`, samples of which coverage is lower than the specified coverage will be removed.
 #' @param include_iNEXT_results Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if `TRUE`, computation time will increase. If `FALSE`, it returns a rarefied phyloseq object only.
+#' @param se Logical. Specify whether SE of the rarefaction curve is calculated.
 #' @param nboot Numeric. Specify `nboot` of iNEXT function (valid only if `include_iNEXT_results = TRUE`).
 #' @param knots Numeric. Specify `knots` of iNEXT function (valid only if `include_iNEXT_results = TRUE`).
 #' @param n_rarefy_iter Numeric. The number of iterations of rarefactions (default = 1).
