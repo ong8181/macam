@@ -11,7 +11,8 @@ make_block_mvd(
   E_effect_var,
   cause_var_colname = "cause_var",
   include_var = "strongest_only",
-  p_threshold = 0.05
+  p_threshold = 0.05,
+  sort_tp = TRUE
 )
 }
 \arguments{
@@ -27,7 +28,9 @@ make_block_mvd(
 
 \item{include_var}{Character. \code{all_significant}, \code{strongest_only}, or \code{tp0_only}. If \code{all_significant}, all significantly influencing variables are used for the embedding. If \code{strongest_only}, tp with the strongest influence for each variable is used. If \code{tp0_only}, only variables with no time-delay are used.}
 
-\item{p_threshold}{Numeric. Random seed.}
+\item{p_threshold}{Numeric. Rows with pval larger than \code{p_threshold} is removed.}
+
+\item{sort_tp}{Logical. If TRUE, \code{block_mvd} is sorted according to \code{tp} for each causal variable.}
 }
 \value{
 Embedded time series will be returned.

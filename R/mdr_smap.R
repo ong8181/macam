@@ -93,7 +93,8 @@ uic_across <- function(block,
 #' @param E_effect_var Numeric. Optimal embedding dimension of the effect variable.
 #' @param cause_var_colname Character. A column name for causal variables in `uic_res`.
 #' @param include_var Character. `all_significant`, `strongest_only`, or `tp0_only`. If `all_significant`, all significantly influencing variables are used for the embedding. If `strongest_only`, tp with the strongest influence for each variable is used. If `tp0_only`, only variables with no time-delay are used.
-#' @param p_threshold Numeric. Random seed.
+#' @param p_threshold Numeric. Rows with pval larger than `p_threshold` is removed.
+#' @param sort_tp Logical. If TRUE, `block_mvd` is sorted according to `tp` for each causal variable.
 #' @return Embedded time series will be returned.
 #' @export
 make_block_mvd <- function (block,
@@ -102,7 +103,8 @@ make_block_mvd <- function (block,
                             E_effect_var,
                             cause_var_colname = "cause_var",
                             include_var = "strongest_only",
-                            p_threshold = 0.050) {
+                            p_threshold = 0.050,
+                            sort_tp = TRUE) {
   # Retrieve colnames
   x_names <- colnames(block)
 
@@ -118,9 +120,7 @@ make_block_mvd <- function (block,
   if (!all(unique(x_names) == x_names)) stop("\"block\" should have unique column names.")
   if (!is.data.frame(block)) stop("\"block\" should be data.frame.")
   if (!is.numeric(p_threshold)) stop("\"p_threshold\" should be numeric.")
-  if (include_var != "all_significant" & include_var != "strongest_only" & include_var != "tp0_only") {
-    stop("\"include_var\" should be \"all_significant\", \"strongest_only\", or \"tp0_only\".")
-  }
+  if (!include_var %in% c("all_significant", "strongest_only", "tp0_only")) stop("\"include_var\" should be \"all_significant\", \"strongest_only\", or \"tp0_only\".")
   if (E_effect_var < 1) stop("\"max_delay_self\" should be >= 1.")
 
   # Preparation
@@ -132,8 +132,18 @@ make_block_mvd <- function (block,
     colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
   }
   # Pre-screening (p & tp)
-  message("UIC results with `tp` <= 0 are removed.")
+  message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
+
+  # Sort block columns according to tp for each causal variable
+  if (sort_tp) {
+    sort_id <- 0
+    for (col_i in unique(uic_res[,cause_var_colname])) {
+      sort_id_i <- order(-uic_res[uic_res[,cause_var_colname] == col_i,"tp"])
+      sort_id <- c(sort_id, max(sort_id) + sort_id_i)
+    }
+    sort_id <- sort_id[-1]; uic_res <- uic_res[sort_id,]
+  }
 
   # ---------------------------------------------------- #
   # Select variables to be included in block
@@ -213,7 +223,7 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
   if (!(E %% 1 == 0) | E < 1) stop("\"E\" should be a natural number.")
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
   if (colnames(block_mvd)[1] != sprintf("%s_tp0", effect_var)) stop("The first column should be the target variable with tp = 0!")
-  if (make_block_method != "naive" & make_block_method != "rEDM") stop("\"multiview_method\" should be \"custom\" or \"rEDM\".")
+  if (!(make_block_method %in% c("naive", "rEDM"))) stop("\"make_block_method\" should be \"naive\" or \"rEDM\".")
 
 
   # ---------------------------------------------------- #
