@@ -38,6 +38,7 @@ uic_across <- function(block,
   # ---------------------------------------------------- #
   # Rearrange the column order
   block <- dplyr::select(block, tidyselect::all_of(effect_var), dplyr::everything())
+  if (exists("uic_res")) rm(uic_res)
 
   # ---------------------------------------------------- #
   # Identify causal relationship using rUIC
