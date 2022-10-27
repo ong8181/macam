@@ -247,17 +247,19 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
       valid_idx <- 2:ncol(block_mvd)
     }
     # Check the number of possible embeddings
-    if (choose(length(valid_idx), E - 1) > n_ssr) {
+    if (choose(length(valid_idx), E-1) > n_ssr) {
       # Randomly select embeddings
-      emb_list0 <- matrix(0, nrow = 1, ncol = E-1)
+      emb_list0 <- matrix(0, nrow = 1, ncol = E-1); i <- 1
       while (nrow(emb_list0) < n_ssr + 1) {
+        i <- i + 1; set.seed(random_seed + i)
         emb_list0_tmp <- matrix(sort(sample(valid_idx, E-1, replace = FALSE)), nrow = 1)
-        if(all(!(apply(emb_list0- c(emb_list0_tmp), 1, function(x) all(x == 0))))) {
-          emb_list0 <- rbind(emb_list0, emb_list0_tmp)
-        }
+        emb_dif <- t(t(emb_list0) - c(emb_list0_tmp)) # Subtract a vector from matrix
+        if(all(!apply(emb_dif == 0, 1, all))) emb_list0 <- rbind(emb_list0, emb_list0_tmp)
       }
+      # Add target variable
       emb_list1 <- cbind(matrix(1, ncol = 1, nrow = nrow(emb_list0)-1), emb_list0[-1,])
-      emb_list1 <- apply(emb_list1, 2, sort, decreasing=F)
+      # Sort emb_list1
+      emb_list1 <- emb_list1[do.call(order, as.list(as.data.frame(emb_list1))),]
       embedding_list <- emb_list1
     } else {
       emb_list0 <- t(utils::combn(valid_idx, E-1, simplify = TRUE))
