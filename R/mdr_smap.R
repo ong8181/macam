@@ -324,7 +324,8 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
     all_res <- list(multiview_dist); names(all_res) <- "multiview_dist"
     all_res$embeddings <- rand_embed_res
     all_res$top_embeddings <- top_embed_res
-    all_res$parms <- data.frame(E = E, tp = tp, n_ssr = n_ssr, k = k, random_seed = random_seed)
+    all_res$parms <- data.frame(E = E, tp = tp, n_ssr = nrow(rand_embed_res),
+                                k = nrow(top_embed_res), random_seed = random_seed)
     return(all_res)
   }
 }
