@@ -53,7 +53,7 @@ uic_across <- function(block,
       uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
-      if (exists("uic_res")) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
+      if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
       # Output message
       time_used <- (proc.time() - time_start)[3]
       if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
@@ -68,7 +68,7 @@ uic_across <- function(block,
       uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
-      if (exists("uic_res")) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
+      if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
       # Output message
       time_used <- (proc.time() - time_start)[3]
       if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
@@ -287,7 +287,7 @@ compute_mvd <- function (block_mvd, effect_var, E, tp = 1,
     # Add information
     rand_embed_res_i$embedding <- stringr::str_sub(stringr::str_c(embedding_idx_i, ",", collapse = " "), end = -2)
     # Merge results
-    if (!exists("rand_embed_res")) { rand_embed_res <- rand_embed_res_i } else { rand_embed_res <- rbind(rand_embed_res, rand_embed_res_i)}
+    if (i == 1) { rand_embed_res <- rand_embed_res_i } else { rand_embed_res <- rbind(rand_embed_res, rand_embed_res_i)}
   }
 
   ## Sort the result based on "evaluated_by"
