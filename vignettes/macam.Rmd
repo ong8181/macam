@@ -167,7 +167,7 @@ packageVersion("rUIC") # v0.1.5
 
 # Load data
 data(data_4sp)
-effect_var <- "Tridentiger.trigonocephalus"
+effect_var <- "Girella.punctata"
 
 # Step. 1: Estimate optimal embeding dimension
 simp_x <- rUIC::simplex(data_4sp, lib_var = effect_var, E = 0:10, tp = 1)
@@ -185,16 +185,17 @@ multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
 # Step. 5: Do MDR S-map
 mdr_res <- s_map_mdr(block_mvd,
                      dist_w = multiview_dist,
-                     theta = 8,
+                     theta = 0.1,
+                     tp = 1,
                      regularized = FALSE,
                      save_smap_coefficients = TRUE)
-mdr_res$stats # rho = 0.40; rmse = 43.57
+mdr_res$stats # rho = 0.339; rmse = 28.687
 
 # Compare with the normal S-map
 smap_res <- rEDM::block_lnlp(data_4sp, target_column = effect_var,
-                 method = "s-map", theta = 8, tp = 1)
-smap_res$rho # rho = 0.34
-smap_res$rmse # rho = 49.29
+                 method = "s-map", theta = 0.1, tp = 1)
+smap_res$rho # rho = 0.318
+smap_res$rmse # rho = 28.360
 
 # An all-in-one wrapper function
 all_res <- s_map_mdr_all(data_4sp, effect_var)
