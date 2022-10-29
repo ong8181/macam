@@ -134,6 +134,7 @@ make_block_mvd <- function (block,
   # Pre-screening (p & tp)
   message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
+  if (nrow(uic_res) < 1) stop("No causal variables are remained. Please use the univariate S-map.")
 
   # Sort block columns according to tp for each causal variable
   if (sort_tp) {
