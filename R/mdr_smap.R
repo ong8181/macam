@@ -21,7 +21,7 @@ uic_across <- function(block,
                        random_seed = 1234,
                        silent = FALSE) {
   # Set random seed
-  set.seed(random_seed)
+  #set.seed(random_seed)
 
   # Retrieve colnames
   x_names <- colnames(block)
@@ -50,7 +50,7 @@ uic_across <- function(block,
     for (y_i in x_names[x_names != effect_var]) {
       time_start <- proc.time()
       # Testing the effect of "y_i" on "effect_var" using uic.optimal()
-      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
+      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range, seed = random_seed) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
       if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
@@ -65,7 +65,7 @@ uic_across <- function(block,
     for (y_i in x_names[x_names != effect_var]) {
       time_start <- proc.time()
       # Testing the effect of "y_i" on "effect_var" using uic.marginal()
-      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
+      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range, seed = random_seed) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
       if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
@@ -128,7 +128,7 @@ make_block_mvd <- function (block,
     block_mvd <- data.frame(block[,effect_var])
     colnames(block_mvd) <- sprintf("%s_tp0", effect_var)
   } else {
-    block_mvd <- rEDM::make_block(block[,effect_var], max_lag = E_effect_var)[,-1] %>% data.frame
+    block_mvd <- data.frame(rEDM::make_block(block[,effect_var], max_lag = E_effect_var)[,-1])
     colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
   }
   # Pre-screening (p & tp)
@@ -154,7 +154,8 @@ make_block_mvd <- function (block,
     # Select all significant variables
     # ---------------------------------------------------- #
     for (i in 1:nrow(uic_res)) {
-      block_new <- dplyr::lag(block[,uic_res[i, cause_var_colname]], n = abs(uic_res[i,"tp"])) %>% data.frame
+      block_new <- dplyr::lag(block[,uic_res[i, cause_var_colname]], n = abs(uic_res[i,"tp"]))
+      block_new <- data.frame(block_new)
       colnames(block_new) <- sprintf("%s_tp%s", uic_res[i, cause_var_colname], uic_res[i,"tp"])
       block_mvd <- cbind(block_mvd, block_new)
     }
@@ -175,7 +176,8 @@ make_block_mvd <- function (block,
     uic_res <- uic_res_new
     #uic_res <- uic_res %>% dplyr::group_by(.data$cause_var) %>% dplyr::filter(.data$te == max(.data$te))
     for (i in 1:nrow(uic_res)) {
-      block_new <- dplyr::lag(block[,uic_res[i,cause_var_colname]], n = abs(uic_res[i,"tp"])) %>% data.frame
+      block_new <- dplyr::lag(block[,uic_res[i,cause_var_colname]], n = abs(uic_res[i,"tp"]))
+      block_new <- data.frame(block_new)
       colnames(block_new) <- sprintf("%s_tp%s", uic_res[i,cause_var_colname], uic_res[i,"tp"])
       block_mvd <- cbind(block_mvd, block_new)
     }
@@ -183,7 +185,8 @@ make_block_mvd <- function (block,
     # ---------------------------------------------------- #
     # Select causal variables with tp = 0
     # ---------------------------------------------------- #
-    block_new <- block[,unique(uic_res[,cause_var_colname])] %>% data.frame
+    block_new <- block[,unique(uic_res[,cause_var_colname])]
+    block_new <- data.frame(block_new)
     colnames(block_new) <- sprintf("%s_tp0", unique(uic_res[,cause_var_colname]))
     block_mvd <- cbind(block_mvd, block_new)
   }
