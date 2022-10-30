@@ -76,8 +76,10 @@ uic_across <- function(block,
   }
 
   # Message
-  message("By using `uic_across()` the effect variable is recorded in the column named `effect_var`, while potential causal variables are recorded in the column named `cause_var`.")
-  message("Please note that these column names are used in the subsequent analysis if you use `make_block_mvd()`.")
+  if (!silent) {
+    message("By using `uic_across()` the effect variable is recorded in the column named `effect_var`, while potential causal variables are recorded in the column named `cause_var`.")
+    message("Please note that these column names are used in the subsequent analysis if you use `make_block_mvd()`.")
+  }
 
   # Return results
   return(as.data.frame(uic_res))
@@ -134,7 +136,7 @@ make_block_mvd <- function (block,
   # Pre-screening (p & tp)
   message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
-  if (nrow(uic_res) < 1) stop("No causal variables are remained. Please use the univariate S-map.")
+  if (nrow(uic_res) < 1) stop("No significant causal variables were detected. Please use the univariate S-map.")
 
   # Sort block columns according to tp for each causal variable
   if (sort_tp) {
