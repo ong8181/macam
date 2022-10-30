@@ -383,7 +383,8 @@ s_map_mdr <- function(block_mvd,
                                   lambda = lambda,
                                   alpha = alpha,
                                   glmnet_parallel = glmnet_parallel,
-                                  save_smap_coefficients = save_smap_coefficients)
+                                  save_smap_coefficients = save_smap_coefficients,
+                                  random_seed = random_seed)
   # Return results
   return(mdr_res)
 }
