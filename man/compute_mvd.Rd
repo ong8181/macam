@@ -10,6 +10,7 @@ compute_mvd(
   E,
   tp = 1,
   make_block_method = "naive",
+  make_block_max_lag = E,
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
   random_seed = 1234,
@@ -26,6 +27,8 @@ compute_mvd(
 \item{tp}{Numeric. Forecasting time ahead.}
 
 \item{make_block_method}{Character. If \code{naive}, the multivariate data.frame (\code{block_mvd}) is directly used to calculate the multiview distance. If \code{rEDM}, \code{rEDM::make_block()} is used to add the time-delayed ordinate for each variable, which make the method equivalent to Chang et al. (2021).}
+
+\item{make_block_max_lag}{Numeric. \code{max_lag} in \code{rEDM::make_block()}. This argument will be used only if \code{make_block_method = "rEDM"}.}
 
 \item{n_ssr}{Numeric. The total number of embeddings examined.}
 

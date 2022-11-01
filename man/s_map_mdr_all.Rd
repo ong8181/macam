@@ -12,7 +12,9 @@ s_map_mdr_all(
   tp = 1,
   E_range = 0:10,
   tp_range = -4:0,
-  theta = 8,
+  n_ssr = 100,
+  k = 10,
+  theta = 0,
   regularized = FALSE,
   lambda = 0,
   alpha = 0,
@@ -36,6 +38,10 @@ s_map_mdr_all(
 \item{E_range}{Numeric. Embedding dimensions that will be tested.}
 
 \item{tp_range}{Numeric. \code{tp} tested for UIC.}
+
+\item{n_ssr}{Numeric. The total number of embeddings examined.}
+
+\item{k}{Numeric. The number of embeddings used to calculate ensemble distance.}
 
 \item{theta}{Numeric. Weighing function for S-map.}
 

@@ -167,17 +167,20 @@ packageVersion("rUIC") # v0.1.5
 
 # Load data
 data(data_4sp)
-effect_var <- "Girella.punctata"
+
+# Standardize data
+data_4sp_std <- as.data.frame(apply(data_4sp, 2, function(x) as.numeric(scale(x))))
+effect_var <- "Trachurus.japonicus"
 
 # Step. 1: Estimate optimal embeding dimension
-simp_x <- rUIC::simplex(data_4sp, lib_var = effect_var, E = 0:10, tp = 1)
+simp_x <- rUIC::simplex(data_4sp_std, lib_var = effect_var, E = 0:10, tp = 1)
 (Ex <- simp_x[which.min(simp_x$rmse),"E"])
 
 # Step 2: Perform UIC to detect causality
-uic_res <- uic_across(data_4sp, effect_var, E_range = 0:10, tp_range = -4:0, random_seed = 1111, silent = TRUE)
+uic_res <- uic_across(data_4sp_std, effect_var, E_range = 0:10, tp_range = -12:0, silent = TRUE)
 
 # Step 3: Make block to calculate multiview distance
-block_mvd <- make_block_mvd(data_4sp, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant")
+block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant")
 
 # Step. 4: Compute multiview distance
 multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
@@ -185,23 +188,23 @@ multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
 # Step. 5: Do MDR S-map
 mdr_res <- s_map_mdr(block_mvd,
                      dist_w = multiview_dist,
-                     theta = 0.1,
+                     theta = 1,
                      tp = 1,
                      regularized = FALSE,
                      save_smap_coefficients = TRUE)
-mdr_res$stats # rho = 0.339; rmse = 28.687
+mdr_res$stats # rho = 0.580; rmse = 0.743
 
 # Compare with the normal S-map
-smap_res <- rEDM::block_lnlp(data_4sp, target_column = effect_var,
-                 method = "s-map", theta = 0.1, tp = 1)
-smap_res$rho # rho = 0.318
-smap_res$rmse # rho = 28.360
+smap_res <- rEDM::block_lnlp(data_4sp_std, target_column = effect_var,
+                 method = "s-map", theta = 1, tp = 1, stats_only = F)
+smap_res$rho # rho = 0.573
+smap_res$rmse # rho = 0.824
 
 # An all-in-one wrapper function
-all_res <- s_map_mdr_all(data_4sp, effect_var, random_seed = 1111)
+all_res <- s_map_mdr_all(data_4sp_std, effect_var, theta = 1, tp = 1)
 ## Note that include_var = "tp0_only" is used in s_map_mdr_all()
-## And thus, the result is different from the example using step-by-step functions
-
+## Thus, the result is different from the example using step-by-step functions
+## n_ssr = 100 and k = 10 to speed up the computation
 ```
 
 ### `twin_surrogate_cpp()`
