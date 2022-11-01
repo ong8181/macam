@@ -49,3 +49,9 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 
 ### ggplot2 functions
 - `label_10_to_power()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)
+
+### data
+- `data_4sp`: Demo time series data for time series analysis. Data is from [Ushio et al. (2018)](https://doi.org/10.1038/nature25504).
+- `asv_sheet`: A demo ASV sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
+- `sample_sheet`: A demo sample sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
+- `tax_sheet`: A demo taxa sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
