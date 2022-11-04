@@ -14,7 +14,8 @@ compute_mvd(
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
   random_seed = 1234,
-  distance_only = TRUE
+  distance_only = TRUE,
+  silent = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ compute_mvd(
 \item{random_seed}{Numeric. Random seed.}
 
 \item{distance_only}{Logical. if \code{TRUE}, only distance matrix is returned.}
+
+\item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
 \value{
 A distance matrix and other information (if \code{distance_only = FALSE}).

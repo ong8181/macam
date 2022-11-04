@@ -12,7 +12,8 @@ make_block_mvd(
   cause_var_colname = "cause_var",
   include_var = "strongest_only",
   p_threshold = 0.05,
-  sort_tp = TRUE
+  sort_tp = TRUE,
+  silent = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ make_block_mvd(
 \item{p_threshold}{Numeric. Rows with pval larger than \code{p_threshold} is removed.}
 
 \item{sort_tp}{Logical. If TRUE, \code{block_mvd} is sorted according to \code{tp} for each causal variable.}
+
+\item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
 \value{
 Embedded time series will be returned.

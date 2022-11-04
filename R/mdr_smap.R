@@ -97,6 +97,7 @@ uic_across <- function(block,
 #' @param include_var Character. `all_significant`, `strongest_only`, or `tp0_only`. If `all_significant`, all significantly influencing variables are used for the embedding. If `strongest_only`, tp with the strongest influence for each variable is used. If `tp0_only`, only variables with no time-delay are used.
 #' @param p_threshold Numeric. Rows with pval larger than `p_threshold` is removed.
 #' @param sort_tp Logical. If TRUE, `block_mvd` is sorted according to `tp` for each causal variable.
+#' @param silent Logical. if `TRUE`, progress message will not be shown.
 #' @return Embedded time series will be returned.
 #' @export
 make_block_mvd <- function (block,
@@ -106,7 +107,8 @@ make_block_mvd <- function (block,
                             cause_var_colname = "cause_var",
                             include_var = "strongest_only",
                             p_threshold = 0.050,
-                            sort_tp = TRUE) {
+                            sort_tp = TRUE,
+                            silent = FALSE) {
   # Retrieve colnames
   x_names <- colnames(block)
 
@@ -134,7 +136,7 @@ make_block_mvd <- function (block,
     colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
   }
   # Pre-screening (p & tp)
-  message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
+  if (!silent) message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
   if (nrow(uic_res) < 1) stop("No significant causal variables were detected. Please use the univariate S-map.")
 
@@ -210,6 +212,7 @@ make_block_mvd <- function (block,
 #' @param k Numeric. The number of embeddings used to calculate ensemble distance.
 #' @param random_seed Numeric. Random seed.
 #' @param distance_only Logical. if `TRUE`, only distance matrix is returned.
+#' @param silent Logical. if `TRUE`, progress message will not be shown.
 #' @return A distance matrix and other information (if `distance_only = FALSE`).
 #' @details
 #' \itemize{
@@ -222,7 +225,8 @@ compute_mvd <- function (block_mvd, effect_var, E,
                          make_block_max_lag = E,
                          n_ssr = 10000, k = floor(sqrt(n_ssr)),
                          random_seed = 1234,
-                         distance_only = TRUE) {
+                         distance_only = TRUE,
+                         silent = FALSE) {
   # Set random seed
   set.seed(random_seed)
   # Retrieve colnames
@@ -258,7 +262,7 @@ compute_mvd <- function (block_mvd, effect_var, E,
     # Check the number of possible embeddings
     if (choose(length(valid_idx), E-1) >= n_ssr) {
       # Output message
-      message(sprintf("The performance of %s embeddings (n_ssr) will be evaluated from %s potential embeddings", n_ssr, choose(length(valid_idx), E-1)))
+      if (!silent) message(sprintf("The performance of %s embeddings (n_ssr) will be evaluated from %s potential embeddings", n_ssr, choose(length(valid_idx), E-1)))
       # Randomly select embeddings
       emb_list0 <- matrix(0, nrow = 1, ncol = E-1); i <- 1
       while (nrow(emb_list0) < n_ssr + 1) {
@@ -273,7 +277,7 @@ compute_mvd <- function (block_mvd, effect_var, E,
       emb_list1 <- emb_list1[do.call(order, as.list(as.data.frame(emb_list1))),]
       embedding_list <- emb_list1
     } else {
-      message("The number of potential embeddings is smaller than \"n_srr\". Thus, the performance of all potential embeddings will be evalulated.")
+      if (!silent) message("The number of potential embeddings is smaller than \"n_srr\". Thus, the performance of all potential embeddings will be evalulated.")
       emb_list0 <- t(utils::combn(valid_idx, E-1, simplify = TRUE))
       emb_list1 <- cbind(matrix(1, ncol = 1, nrow = nrow(emb_list0)), emb_list0)
       embedding_list <- emb_list1
@@ -305,10 +309,10 @@ compute_mvd <- function (block_mvd, effect_var, E,
   rand_embed_res <- rand_embed_res[order(rand_embed_res[,"rho"], decreasing = T),]
   if (k <= nrow(rand_embed_res)) {
     # Output message
-    message(sprintf("Top %s embeddings (k) will be used from %s evaluated embeddings (n_ssr)", k, nrow(rand_embed_res)))
+    if (!silent) message(sprintf("Top %s embeddings (k) will be used from %s evaluated embeddings (n_ssr)", k, nrow(rand_embed_res)))
     top_embed_res <- rand_embed_res[1:k,]
   } else {
-    message("The total number of embeddings is smaller than \"k\". Thus, all embeddings will be used to calculate the multiview distance.")
+    if (!silent) message("The total number of embeddings is smaller than \"k\". Thus, all embeddings will be used to calculate the multiview distance.")
     top_embed_res <- rand_embed_res
   }
   # Rename row names
