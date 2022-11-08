@@ -309,14 +309,19 @@ compute_mvd <- function (block_mvd, effect_var, E,
     if (i == 1) { rand_embed_res <- rand_embed_res_i } else { rand_embed_res <- rbind(rand_embed_res, rand_embed_res_i)}
   }
 
+  ## Remove rho <= 0 because it is meaningless prediction.
+  rand_embed_res <- rand_embed_res[rand_embed_res[,"rho"] > 0,]
+  if (!silent) message("Embeddings with rho < 0 were removed.")
+  if (nrow(rand_embed_res) == 0) stop("Cannot find embeddings with positive prediction skill. Reconsider parameters.")
+
   ## Sort the result based on "evaluated_by"
   rand_embed_res <- rand_embed_res[order(rand_embed_res[,"rho"], decreasing = T),]
   if (k <= nrow(rand_embed_res)) {
     # Output message
-    if (!silent) message(sprintf("Top %s embeddings (k) will be used from %s evaluated embeddings (n_ssr)", k, nrow(rand_embed_res)))
+    if (!silent) message(sprintf("Top %s embeddings (k) will be used from %s embeddings (rho > 0 in n_ssr embeddings)", k, nrow(rand_embed_res)))
     top_embed_res <- rand_embed_res[1:k,]
   } else {
-    if (!silent) message("The total number of embeddings is smaller than \"k\". Thus, all embeddings will be used to calculate the multiview distance.")
+    if (!silent) message("The total number of valid embeddings is smaller than \"k\". Thus, all valid embeddings will be used to calculate the multiview distance.")
     top_embed_res <- rand_embed_res
   }
   # Rename row names
@@ -361,6 +366,7 @@ compute_mvd <- function (block_mvd, effect_var, E,
 #' @param pred Numeric vector. Prediction indices.
 #' @param tp Numeric. Forecasting time ahead.
 #' @param theta Numeric. Weighing function for S-map.
+#' @param weight_method Specify weighing method for `dist_w`. Default is `sqrt`, which is the same for Chang et al. (2021).
 #' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
 #' @param lambda Numeric. Specify the strength of penalty in the regularization.
 #' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
@@ -377,6 +383,7 @@ s_map_mdr <- function(block_mvd,
                       dist_w,
                       lib = c(1, nrow(block_mvd)), pred = lib,
                       tp = 1, theta = 8,
+                      weight_method = "sqrt",
                       regularized = FALSE,
                       lambda = 0, alpha = 0,
                       glmnet_parallel = FALSE,
@@ -384,6 +391,8 @@ s_map_mdr <- function(block_mvd,
                       random_seed = 1234) {
   # Check input
   if (!(nrow(block_mvd) == nrow(dist_w))) stop(" \"dist_w\" should have the same size with \"block_mvd\"")
+  if (!is.null(weight_method) & weight_method != "sqrt") stop("Specify the valid option for \"weight_method\": NULL or \"sqrt\"")
+  if (weight_method == "sqrt") dist_w = sqrt(dist_w)
 
   # ---------------------------------------------------- #
   # Perform MDR S-map using macam::extended_lnlp

@@ -11,6 +11,7 @@ s_map_mdr(
   pred = lib,
   tp = 1,
   theta = 8,
+  weight_method = "sqrt",
   regularized = FALSE,
   lambda = 0,
   alpha = 0,
@@ -31,6 +32,8 @@ s_map_mdr(
 \item{tp}{Numeric. Forecasting time ahead.}
 
 \item{theta}{Numeric. Weighing function for S-map.}
+
+\item{weight_method}{Specify weighing method for \code{dist_w}. Default is \code{sqrt}, which is the same for Chang et al. (2021).}
 
 \item{regularized}{Logical If \code{TRUE}, regularized S-map will be performed. If \code{FALSE}, the normal S-map will be performed. Please use \code{rEDM::s_map} function.}
 
