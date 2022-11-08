@@ -206,6 +206,8 @@ make_block_mvd <- function (block,
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
 #' @param E Numeric. Optimal embedding dimension of `effect_var`
 #' @param tp Numeric. Forecasting time ahead.
+#' @param lib Numeric vector. Library indices.
+#' @param pred Numeric vector. Prediction indices.
 #' @param make_block_method Character. If `naive`, the multivariate data.frame (`block_mvd`) is directly used to calculate the multiview distance. If `rEDM`, `rEDM::make_block()` is used to add the time-delayed ordinate for each variable, which make the method equivalent to Chang et al. (2021).
 #' @param make_block_max_lag Numeric. `max_lag` in `rEDM::make_block()`. This argument will be used only if `make_block_method = "rEDM"`.
 #' @param n_ssr Numeric. The total number of embeddings examined.
@@ -221,6 +223,8 @@ make_block_mvd <- function (block,
 #' @export
 compute_mvd <- function (block_mvd, effect_var, E,
                          tp = 1,
+                         lib = c(1, nrow(block_mvd)),
+                         pred = lib,
                          make_block_method = "naive", # "rEDM"
                          make_block_max_lag = E,
                          n_ssr = 10000, k = floor(sqrt(n_ssr)),
@@ -293,8 +297,8 @@ compute_mvd <- function (block_mvd, effect_var, E,
     embedding_idx_i <- embedding_list[i,]
     ## Perform simplex projection
     rand_embed_res_i <- rEDM::block_lnlp(block_mvd[,embedding_idx_i],
-                                         lib = c(1, nrow(block_mvd)),
-                                         pred = c(1, nrow(block_mvd)),
+                                         lib = lib,
+                                         pred = pred,
                                          method = "simplex",
                                          silent = TRUE,
                                          tp = tp,
@@ -341,6 +345,7 @@ compute_mvd <- function (block_mvd, effect_var, E,
     all_res <- list(multiview_dist); names(all_res) <- "multiview_dist"
     all_res$embeddings <- rand_embed_res
     all_res$top_embeddings <- top_embed_res
+    if (is.null(random_seed)) random_seed <- "NULL"
     all_res$parms <- data.frame(E = E, tp = tp, n_ssr = nrow(rand_embed_res),
                                 k = nrow(top_embed_res), random_seed = random_seed)
     return(all_res)
