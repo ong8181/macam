@@ -11,7 +11,7 @@ outdir_create <- function(save_dir_name = TRUE, str_end = 3, suffix = "Out") {
   # Extract output directory name
   output_dir <- rstudioapi::getSourceEditorContext()$path %>%
     basename %>% stringr::str_sub(end = - str_end) %>%
-    paste0("Out")
+    paste0(suffix)
   # Create output directory
   dir.create(output_dir)
   # Retrieve output directory name
@@ -52,7 +52,7 @@ save_session_info <- function(session_info_dir = "00_SessionInfo", create_sessio
   if (!dir.exists(session_info_dir) & create_session_info_dir) {
     dir.create(session_info_dir)
   } else if (dir.exists(session_info_dir) & create_session_info_dir) {
-    message("session_info_dir already exist. The directory was NOT overwrited.")
+    message("session_info_dir already exist. The directory is NOT overwrited.")
   } else if (!dir.exists(session_info_dir) & !create_session_info_dir){
     stop("session_info_dir does not exist. Please create it.")
   }
