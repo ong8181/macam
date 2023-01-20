@@ -21,17 +21,17 @@ outdir_create <- function(save_dir_name = TRUE, str_end = 3, suffix = "Out") {
 
 #' @title Save workspace using an output directory name
 #' @description \code{save_workspace} saves current workspace in a user-specified output directory.
-#' @param output_dir Character. Workspace will be saved in this directory.
+#' @param workspace_dir Character. Workspace will be saved in this directory.
 #' @export
 #' @examples
 #' # output_dir <- outdir_create()
 #' # save_workspace(output_dir)
-save_workspace <- function(output_dir) {
+save_workspace <- function(workspace_dir) {
   # Create output_dir if it does not exists
-  if (!dir.exists(output_dir)) dir.create(output_dir)
+  if (!dir.exists(workspace_dir)) dir.create(workspace_dir)
   # Save workspace
   save(list = ls(all.names = TRUE),
-     file = paste0(output_dir, "/", output_dir, ".RData"))
+     file = paste0(workspace_dir, "/", workspace_dir, ".RData"))
 }
 
 
