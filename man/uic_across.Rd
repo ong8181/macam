@@ -37,6 +37,6 @@ A data.frame that contains UIC results
 }
 \details{
 \itemize{
-\item{Osada, Y. & Ushio, M. (2020) rUIC:Unified Information-theoretic Causality for R. https://doi.org/10.5281/zenodo.5163234}
+\item{Osada & Ushio (2020) rUIC:Unified Information-theoretic Causality for R. https://doi.org/10.5281/zenodo.5163234}
 }
 }

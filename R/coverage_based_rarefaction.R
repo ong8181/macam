@@ -15,7 +15,7 @@
 ## https://github.com/JohnsonHsieh/iNEXT/blob/master/R/EstIndex.R
 psinfo_inext <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
   # Exporting otu_table
-  if(taxa_are_rows(ps_obj)) {
+  if(phyloseq::taxa_are_rows(ps_obj)) {
     # Taxa are in rows
     otu_df <- data.frame(phyloseq::otu_table(ps_obj))
   } else {
@@ -27,17 +27,17 @@ psinfo_inext <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
   # iNEXT::DataInfo()
   ps_info <- iNEXT::DataInfo(otu_list, datatype = datatype)
   # Correct singltons
-  corrected_otu_list <- map(otu_list, function(x) singleton_estimator(x)$corrected_data)
+  corrected_otu_list <- purrr::map(otu_list, function(x) singleton_estimator(x)$corrected_data)
   ps_info2 <- iNEXT::DataInfo(corrected_otu_list, datatype = datatype)
   ps_info$f1_cor <- ps_info2$f1
   ps_info$SC_cor <- ps_info2$SC
 
-  if(estimte_div) {
+  if(estimate_div) {
     # Estimate diversity
-    estimate_div <- iNEXT::estimateD(list_S, datatype = datatype, base = "coverage",
-                                     q = 0, conf = 0.95, level = min(ps_info$SC))
+    estimate_div_df <- iNEXT::estimateD(otu_list, datatype = datatype, base = "coverage",
+                                        q = 0, conf = 0.95, level = min(ps_info$SC))
     # Return statistics
-    ps_list <- list(ps_info, estimate_div)
+    ps_list <- list(ps_info, estimate_div_df)
     names(ps_list) <- c("ps_info", "estimate_div")
     return(ps_list)
   } else {

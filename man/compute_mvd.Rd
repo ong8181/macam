@@ -55,6 +55,6 @@ A distance matrix and other information (if \code{distance_only = FALSE}).
 }
 \details{
 \itemize{
-\item{Chang, C.-W., Miki, T., Ushio, M., Ke, P.-J., Lu, H.-P., Shiah, F.-K. & et al. (2021) Reconstructing large interaction networks from empirical time series data. Ecology Letters, 24, 2763– 2774. https://doi.org/10.1111/ele.13897}
+\item{Chang et al. (2021) Ecology Letters. https://doi.org/10.1111/ele.13897}
 }
 }

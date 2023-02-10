@@ -9,6 +9,7 @@ rarefy_even_coverage(
   coverage = 0.97,
   remove_not_rarefied = FALSE,
   include_iNEXT_results = FALSE,
+  correct_singletons = FALSE,
   se = FALSE,
   nboot = 40,
   knots = 50,
@@ -26,6 +27,8 @@ rarefy_even_coverage(
 \item{remove_not_rarefied}{Logical. If \code{TRUE}, samples of which coverage is lower than the specified coverage will be removed.}
 
 \item{include_iNEXT_results}{Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if \code{TRUE}, computation time will increase. If \code{FALSE}, it returns a rarefied phyloseq object only.}
+
+\item{correct_singletons}{Logical. If TURE, singleton counts will be corrected according to the method of Chiu & Chao (2016). Corrected coverage and reads will be used for the rarefaction of the original data.}
 
 \item{se}{Logical. Specify whether SE of the rarefaction curve is calculated.}
 
@@ -46,6 +49,11 @@ Rarefied phyloseq object (\code{ps_rare}). If \code{include_iNEXT_results = TRUE
 }
 \description{
 \code{rarefy_even_coverage} performs coverage-based rarefaction for a phyloseq object using iNEXT package
+}
+\details{
+\itemize{
+\item{Hsieh et al. (2016) Methods in Ecology and Evolution https://doi.org/10.1111/2041-210X.12613}
+}
 }
 \examples{
 # rarefy_even_coverage(ps_obj, coverage = 0.97)
