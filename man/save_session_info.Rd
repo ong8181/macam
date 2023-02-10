@@ -7,7 +7,8 @@
 save_session_info(
   session_info_dir = "00_SessionInfo",
   create_session_info_dir = FALSE,
-  str_end = 3
+  str_end = 3,
+  suffix = NULL
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ save_session_info(
 \item{create_session_info_dir}{Logical. If \code{TRUE}, the function automatically creates an output directory for the session information}
 
 \item{str_end}{Integer. Trim \code{str_end} characters from the file name.}
+
+\item{suffix}{Character. Suffix that will be appended to the file name.}
 }
 \description{
 \code{save_session_info} saves session information and append date information automatically.

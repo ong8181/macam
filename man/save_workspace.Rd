@@ -4,10 +4,12 @@
 \alias{save_workspace}
 \title{Save workspace using an output directory name}
 \usage{
-save_workspace(workspace_dir)
+save_workspace(workspace_dir, workspace_file_name = NULL)
 }
 \arguments{
 \item{workspace_dir}{Character. Workspace will be saved in this directory.}
+
+\item{workspace_file_name}{Character (optional). Workspace file name.}
 }
 \description{
 \code{save_workspace} saves current workspace in a user-specified output directory.
