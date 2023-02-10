@@ -56,3 +56,12 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - `asv_sheet`: A demo ASV sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
 - `sample_sheet`: A demo sample sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
 - `tax_sheet`: A demo taxa sheet for sequence analysis. Data is from [Ushio (2019)](https://doi.org/10.1111/2041-210X.13204).
+
+
+## References
+- Cenci et al. (2019) Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210X.13150
+- Chang et al. (2021) Ecology Letters. https://doi.org/10.1111/ele.13897
+- Chiu & Chao (2016) PeerJ. https://doi.org/10.7717/peerj.1634
+- Hsieh et al. (2016) Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210X.12613
+- Osada & Ushio (2020) rUIC:Unified Information-theoretic Causality for R. https://doi.org/10.5281/zenodo.5163234
+- Mikryukov (2018) vmikk/metagMisc: v.0.0.4. https://doi.org/10.5281/zenodo.571403

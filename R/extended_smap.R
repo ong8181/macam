@@ -16,7 +16,7 @@
 #' @noRd
 #' @details
 #' \itemize{
-#'  \item{Cenci, S, Sugihara, G, Saavedra, S. Regularized S-map for inference and forecasting with noisy ecological time series. Methods Ecol Evol. 2019; 10: 650– 660. https://doi.org/10.1111/2041-210X.13150}
+#'  \item{Cenci et al. (2019) Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210X.13150}
 #' }
 #' @keywords internal
 extended_smap <- function(vectors,

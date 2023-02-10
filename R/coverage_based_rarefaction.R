@@ -1,9 +1,59 @@
+#' @title Obtaining data information of a phyloseq object
+#' @description \code{psinfo_inext} a wrapper function of `iNEXT::DataInfo()` for a phyloseq object
+#' @param ps_obj Phyloseq object.
+#' @param datatype Character. Specify the data type. `abundance` or `incidence` (this should be normally `abundance` for a phyloseq object).
+#' @param estimate_div logical. If `TRUE`, return the diversity estimate at the minimum coverage using iNEXT::estimateD.
+#' @return data.frame or list.
+#' @details
+#' \itemize{
+#'  \item{Hsieh et al. (2016) Methods in Ecology and Evolution https://doi.org/10.1111/2041-210X.12613}
+#' }
+#' @export
+#' @examples
+#' # psinfo_inext(ps_obj)
+## the code is based on the iNEXT package
+## https://github.com/JohnsonHsieh/iNEXT/blob/master/R/EstIndex.R
+psinfo_inext <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
+  # Exporting otu_table
+  if(taxa_are_rows(ps_obj)) {
+    # Taxa are in rows
+    otu_df <- data.frame(phyloseq::otu_table(ps_obj))
+  } else {
+    # Taxa are in columns
+    otu_df <- data.frame(t(phyloseq::otu_table(ps_obj)))
+  }
+  # Converting dataframe to list
+  otu_list <- otu_df %>% purrr::array_tree(2)
+  # iNEXT::DataInfo()
+  ps_info <- iNEXT::DataInfo(otu_list, datatype = datatype)
+  # Correct singltons
+  corrected_otu_list <- map(otu_list, function(x) singleton_estimator(x)$corrected_data)
+  ps_info2 <- iNEXT::DataInfo(corrected_otu_list, datatype = datatype)
+  ps_info$f1_cor <- ps_info2$f1
+  ps_info$SC_cor <- ps_info2$SC
+
+  if(estimte_div) {
+    # Estimate diversity
+    estimate_div <- iNEXT::estimateD(list_S, datatype = datatype, base = "coverage",
+                                     q = 0, conf = 0.95, level = min(ps_info$SC))
+    # Return statistics
+    ps_list <- list(ps_info, estimate_div)
+    names(ps_list) <- c("ps_info", "estimate_div")
+    return(ps_list)
+  } else {
+    # Return statistics
+    return(ps_info)
+  }
+}
+
+
 #' @title Perform coverage-based rarefaction for a phyloseq object
 #' @description \code{rarefy_even_coverage} performs coverage-based rarefaction for a phyloseq object using iNEXT package
 #' @importFrom magrittr %>%
 #' @param ps_obj Phyloseq object.
 #' @param coverage Numeric. Coverage specified by a user (default = 0.97 = 97%).
 #' @param remove_not_rarefied Logical. If `TRUE`, samples of which coverage is lower than the specified coverage will be removed.
+#' @param correct_singletons Logical. If TURE, singleton counts will be corrected according to the method of Chiu & Chao (2016). Corrected coverage and reads will be used for the rarefaction of the original data.
 #' @param include_iNEXT_results Logical. If TURE, iNEXT results will be included as a element of the output. The first object is a rarefied phyloseq object, and the second object is an iNEXT result. Also, if `TRUE`, computation time will increase. If `FALSE`, it returns a rarefied phyloseq object only.
 #' @param se Logical. Specify whether SE of the rarefaction curve is calculated.
 #' @param nboot Numeric. Specify `nboot` of iNEXT function (valid only if `include_iNEXT_results = TRUE`).
@@ -14,12 +64,17 @@
 #' @param ran_seed Numeric. Random seed.
 #' @return Rarefied phyloseq object (`ps_rare`). If `include_iNEXT_results = TRUE`, `iNEXT` results are stored in the second element of the list.
 #' @export
+#' @details
+#' \itemize{
+#'  \item{Hsieh et al. (2016) Methods in Ecology and Evolution https://doi.org/10.1111/2041-210X.12613}
+#' }
 #' @examples
 #' # rarefy_even_coverage(ps_obj, coverage = 0.97)
 rarefy_even_coverage <-  function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
                                   include_iNEXT_results = FALSE,
+                                  correct_singletons = FALSE,
                                   se = FALSE,
                                   nboot = 40,       # Only valid if include_rarefaction_curve = TRUE
                                   knots = 50,       # Only valid if include_rarefaction_curve = TRUE
@@ -50,13 +105,20 @@ rarefy_even_coverage <-  function(ps_obj,
   if (phyloseq::taxa_are_rows(ps_obj)) {
     com_mat <- ps_obj %>% phyloseq::otu_table() %>% data.frame
   } else {
-    com_mat <- ps_obj %>% phyloseq::otu_table() %>% data.frame %>% t
+    com_mat <- ps_obj %>% phyloseq::otu_table() %>% t %>% data.frame
   }
   all_names <- colnames(com_mat)
 
+  # Get community list
+  com_list <- com_mat %>% purrr::array_tree(2)
+
+  # Correct singleton
+  if (correct_singletons) {
+    com_list <- purrr::map(com_list, function(x) singleton_estimator(x)$corrected_data)
+  }
+
   # Check maximum coverage
-  inext_max_sc <- com_mat %>% purrr::array_tree(2) %>%
-    purrr::map(function(x) Chat.Ind(x, sum(x))) %>% unlist
+  inext_max_sc <- com_list %>% purrr::map(function(x) Chat.Ind(x, sum(x))) %>% unlist
   # Check whether (specified coverage) < (max coverage)
   rarefy_id <- (coverage < inext_max_sc)
   if (all(!rarefy_id)) {
@@ -65,7 +127,7 @@ rarefy_even_coverage <-  function(ps_obj,
 
   # Do iNEXT
   if (include_iNEXT_results) {
-    inext_out <- com_mat %>% purrr::array_tree(2) %>%
+    inext_out <- com_list %>%
       purrr::map(function(x) iNEXT::iNEXT(x, q = 0,
                                           datatype="abundance",
                                           endpoint = sum(x),
@@ -75,12 +137,17 @@ rarefy_even_coverage <-  function(ps_obj,
                                           knots = knots))
   }
   ## Calculate sample size to archive the specified coverage
-  inext_reads <- com_mat[,rarefy_id] %>% purrr::array_tree(2) %>%
+  inext_reads <- com_list[rarefy_id] %>%
     purrr::map(function(x) coverage_to_samplesize(x, coverage)) %>% unlist
-  inext_coverage <- purrr::map2(com_mat[,rarefy_id] %>% purrr::array_tree(2), inext_reads, function(x,y) Chat.Ind(x,y)) %>% unlist
+  inext_coverage <- purrr::map2(com_list[rarefy_id], inext_reads, function(x,y) Chat.Ind(x,y)) %>% unlist
 
   # Get rarefied counts
-  rrlist <- list(x = com_mat[,rarefy_id] %>% t %>% purrr::array_tree(1), y = inext_reads %>% purrr::array_tree())
+  # ! Use original com_mat (NOT com_list).
+  # ! If correct_singletons = TRUE,
+  # ! then we use "corrected" inext_reads and inext_coverage for the original com_mat
+  # ! Estimating which singleton OTU is "true" singlton is currently NOT possible.
+  rrlist <- list(x = com_mat[,rarefy_id] %>% t %>% purrr::array_tree(1),
+                 y = inext_reads %>% purrr::array_tree())
   ## This increases computation time
   if (sample_method == "rrarefy") {
     for (j in 1:n_rarefy_iter) {
@@ -144,7 +211,8 @@ rarefy_even_coverage <-  function(ps_obj,
                   original_coverage = inext_max_sc,
                   rarefied_reads = phyloseq::sample_sums(ps_rare),
                   rarefied_n_taxa = rowSums(phyloseq::otu_table(ps_rare) > 0),
-                  rarefied_coverage = NA)
+                  rarefied_coverage = NA,
+                  correct_singletons = correct_singletons)
   phyloseq::sample_data(ps_rare)[rarefy_id,"rarefied_coverage"] <- inext_coverage
 
   # Output message
@@ -255,7 +323,7 @@ plot_rarefy <- function (ps_obj,
 #
 ## Estimate the required sample size for a particular coverage
 ## the code is based on iNEXT:::invChat.Ind by Johnson Hsieh (d76e3b8, Nov 12, 2016)
-# https://github.com/JohnsonHsieh/iNEXT/blob/de46aeacb4433c539b2880df376e87b44bc1723c/R/invChat.R#L1
+# https://github.com/JohnsonHsieh/iNEXT/
 coverage_to_samplesize <- function(x, coverage = 0.95, add_attr = F){
   # x = vector of species abundances
   # coverage = the desired sample completeness that we want to achieve
