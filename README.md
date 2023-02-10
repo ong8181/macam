@@ -2,6 +2,7 @@
 # macam: A collection of miscellaneous functions for ecology in R
 
 <!-- badges: start -->
+[![DOI](https://zenodo.org/badge/492736367.svg)](https://zenodo.org/badge/latestdoi/492736367)
 <!-- badges: end -->
 
 This package is a collection of miscellaneous functions for ecological studies.
