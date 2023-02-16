@@ -34,6 +34,7 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 ### Sequence analysis
 - `AllOrients()`: List up all orientations of primer sequence (from [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html)).
 - `PrimerHits()`: Count the number of primer hits (from [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html))
+- `cov_info()`: Get coverage and diversity information of a `phyloseq` object using `iNEXT` package.
 - `rarefy_even_coverage()`: Perform coverage-based rarefaction.
 - `plot_rarefy()`: Visualize results of coverage-based rarefaction.
 - `taxa_name_summarize()`: Summarize taxa names in phyloseq object for visualization purpose.

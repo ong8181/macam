@@ -1,5 +1,5 @@
-#' @title Obtaining data information of a phyloseq object
-#' @description \code{psinfo_inext} a wrapper function of `iNEXT::DataInfo()` for a phyloseq object
+#' @title Obtaining coverage information of a phyloseq object
+#' @description \code{coverage_info} a wrapper function of `iNEXT::DataInfo()` for a phyloseq object
 #' @param ps_obj Phyloseq object.
 #' @param datatype Character. Specify the data type. `abundance` or `incidence` (this should be normally `abundance` for a phyloseq object).
 #' @param estimate_div logical. If `TRUE`, return the diversity estimate at the minimum coverage using iNEXT::estimateD.
@@ -10,10 +10,10 @@
 #' }
 #' @export
 #' @examples
-#' # psinfo_inext(ps_obj)
+#' # coverage_info(ps_obj)
 ## the code is based on the iNEXT package
 ## https://github.com/JohnsonHsieh/iNEXT/blob/master/R/EstIndex.R
-psinfo_inext <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
+coverage_info <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
   # Exporting otu_table
   if(phyloseq::taxa_are_rows(ps_obj)) {
     # Taxa are in rows
@@ -25,24 +25,24 @@ psinfo_inext <- function(ps_obj, datatype = "abundance", estimate_div = FALSE){
   # Converting dataframe to list
   otu_list <- otu_df %>% purrr::array_tree(2)
   # iNEXT::DataInfo()
-  ps_info <- iNEXT::DataInfo(otu_list, datatype = datatype)
+  cov_info <- iNEXT::DataInfo(otu_list, datatype = datatype)
   # Correct singltons
   corrected_otu_list <- purrr::map(otu_list, function(x) singleton_estimator(x)$corrected_data)
-  ps_info2 <- iNEXT::DataInfo(corrected_otu_list, datatype = datatype)
-  ps_info$f1_cor <- ps_info2$f1
-  ps_info$SC_cor <- ps_info2$SC
+  cov_info2 <- iNEXT::DataInfo(corrected_otu_list, datatype = datatype)
+  cov_info$f1_cor <- cov_info2$f1
+  cov_info$SC_cor <- cov_info2$SC
 
   if(estimate_div) {
     # Estimate diversity
     estimate_div_df <- iNEXT::estimateD(otu_list, datatype = datatype, base = "coverage",
-                                        q = 0, conf = 0.95, level = min(ps_info$SC))
+                                        q = 0, conf = 0.95, level = min(cov_info$SC))
     # Return statistics
-    ps_list <- list(ps_info, estimate_div_df)
-    names(ps_list) <- c("ps_info", "estimate_div")
-    return(ps_list)
+    cov_info <- list(cov_info, estimate_div_df)
+    names(cov_list) <- c("cov_info", "estimate_div")
+    return(cov_list)
   } else {
     # Return statistics
-    return(ps_info)
+    return(cov_info)
   }
 }
 
