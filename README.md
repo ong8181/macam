@@ -43,11 +43,11 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - `s_map_rgl()`: Perform the regularized S-map in [Cenci et al. (2019)](https://doi.org/10.1111/2041-210X.13150). A wrapper function of `extended_lnlp()`.
 - `extended_lnlp()`: A generalized function for the regularized S-map. For the multivariate S-map, please use this function.
 - `twin_surrogate_cpp()`: Generate twin surrogate time series from an original time series (see [Thiel et al. 2006](https://doi.org/10.1209/epl/i2006-10147-0)).
-- `uic_across()`: Perform UIC across columns (for the MDR S-map).
-- `make_block_mvd()`: Generate data.frame for the calculation of multiview distance (for the MDR S-map).
-- `compute_mvd()`: Compute multiview distance (for the MDR S-map).
-- `s_map_mdr()`: Perform the MDR S-map in [Chang et al. (2021)](https://doi.org/10.1111/ele.13897).
-- `s_map_mdr_all()`: A convenient all-in-one wrapper function for the MDR S-map. To fine-tune parameters, use step-by-step functions such as `compute_mvd()` etc.
+- `uic_across()`: Perform UIC across columns (for the MDR S-map) (beta version).
+- `make_block_mvd()`: Generate data.frame for the calculation of multiview distance (for the MDR S-map) (beta version).
+- `compute_mvd()`: Compute multiview distance (for the MDR S-map) (beta version).
+- `s_map_mdr()`: Perform the MDR S-map in [Chang et al. (2021)](https://doi.org/10.1111/ele.13897)  (beta version).
+- `s_map_mdr_all()`: A convenient all-in-one wrapper function for the MDR S-map. To fine-tune parameters, use step-by-step functions such as `compute_mvd()` etc (beta version).
 
 ### ggplot2 functions
 - `label_10_to_power()`: Convert a numeric variable to a scientific notation (e.g., 1500 will be $1.5 \times 10^3$)
