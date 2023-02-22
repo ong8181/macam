@@ -4,7 +4,7 @@
 \name{macam-package}
 \alias{macam}
 \alias{macam-package}
-\title{macam: A collection of miscellaneous functions for ecology in R}
+\title{macam: A collection of miscellaneous R functions for ecology}
 \description{
 This package contains a collection of miscellaneous functions for ecology. The functions would be useful for ecological studies.
 }

@@ -1,5 +1,5 @@
 
-# macam: A collection of miscellaneous functions for ecology in R
+# macam: A collection of miscellaneous R functions for ecology
 
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/492736367.svg)](https://zenodo.org/badge/latestdoi/492736367)
