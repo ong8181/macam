@@ -163,7 +163,7 @@ y1_ridge$stats$rmse; y1_lasso$stats$rmse
 library(rEDM)
 packageVersion("rEDM") # v0.7.5
 library(rUIC)
-packageVersion("rUIC") # v0.1.5
+packageVersion("rUIC") # v0.9.0
 
 # Load data
 data(data_4sp)
@@ -192,7 +192,7 @@ mdr_res <- s_map_mdr(block_mvd,
                      tp = 1,
                      regularized = FALSE,
                      save_smap_coefficients = TRUE)
-mdr_res$stats # rho = 0.580; rmse = 0.743
+mdr_res$stats # rho = 0.592; rmse = 0.742
 
 # Compare with the normal S-map
 smap_res <- rEDM::block_lnlp(data_4sp_std, target_column = effect_var,
