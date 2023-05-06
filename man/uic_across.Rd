@@ -10,7 +10,6 @@ uic_across(
   uic_method = "optimal",
   E_range = 0:10,
   tp_range = -4:0,
-  random_seed = 1234,
   silent = FALSE
 )
 }
@@ -24,8 +23,6 @@ uic_across(
 \item{E_range}{Numeric. Embedding dimensions that will be tested.}
 
 \item{tp_range}{Numeric. \code{tp} tested for UIC.}
-
-\item{random_seed}{Numeric. Random seed.}
 
 \item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }

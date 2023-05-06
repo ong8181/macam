@@ -5,7 +5,6 @@
 #' @param uic_method Character. `optimal` or `marginal`. For detail, see https://github.com/yutakaos/rUIC.
 #' @param E_range Numeric. Embedding dimensions that will be tested.
 #' @param tp_range Numeric. `tp` tested for UIC.
-#' @param random_seed Numeric. Random seed.
 #' @param silent Logical. if `TRUE`, progress message will not be shown.
 #' @return A data.frame that contains UIC results
 #' @details
@@ -18,7 +17,7 @@ uic_across <- function(block,
                        uic_method = "optimal",
                        E_range = 0:10,
                        tp_range = -4:0,
-                       random_seed = 1234,
+                       #random_seed = 1234,
                        silent = FALSE) {
   # Set random seed
   #set.seed(random_seed)
@@ -50,7 +49,7 @@ uic_across <- function(block,
     for (y_i in x_names[x_names != effect_var]) {
       time_start <- proc.time()
       # Testing the effect of "y_i" on "effect_var" using uic.optimal()
-      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range, seed = random_seed) %>%
+      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
       if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
@@ -65,7 +64,7 @@ uic_across <- function(block,
     for (y_i in x_names[x_names != effect_var]) {
       time_start <- proc.time()
       # Testing the effect of "y_i" on "effect_var" using uic.marginal()
-      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range, seed = random_seed) %>%
+      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
         dplyr::mutate(effect_var = effect_var, cause_var = y_i)
       # Combine results
       if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
@@ -459,7 +458,7 @@ s_map_mdr_all <- function (block,
   Ex <- simp_res[which.min(simp_res$rmse),"E"]
 
   # Step 2: Perform UIC to detect causality
-  uic_res <- uic_across(block, effect_var, E_range = E_range, tp_range = tp_range, silent = silent, random_seed = random_seed)
+  uic_res <- uic_across(block, effect_var, E_range = E_range, tp_range = tp_range, silent = silent)
 
   # Step 3: Make block to calculate multiview distance
   block_mvd <- make_block_mvd(block, uic_res, effect_var, E_effect_var = Ex, include_var = "tp0_only")
