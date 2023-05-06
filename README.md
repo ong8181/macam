@@ -65,4 +65,5 @@ Type `?macam::xxxxx()` for detail. Also please check `browseVignette("macam")`.
 - Chiu & Chao (2016) PeerJ. https://doi.org/10.7717/peerj.1634
 - Hsieh et al. (2016) Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210X.12613
 - Osada & Ushio (2020) rUIC:Unified Information-theoretic Causality for R. https://doi.org/10.5281/zenodo.5163234
+- Osada et al. (2023) bioRxiv. https://doi.org/10.1101/2023.04.20.537743
 - Mikryukov (2018) vmikk/metagMisc: v.0.0.4. https://doi.org/10.5281/zenodo.571403
