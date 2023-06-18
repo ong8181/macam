@@ -105,7 +105,7 @@ plot_rarefy(ps_rare_raw) +
   coord_cartesian(xlim = c(0, 4000))
 ```
 
-### `taxa_name_summarize()`
+### `taxa_name_bundle()`
 ```{r, eval = FALSE}
 # Check current family names
 tax_table(ps_rare)[,"family"]
