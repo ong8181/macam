@@ -4,14 +4,21 @@
 \alias{taxa_name_summarize}
 \title{Summarize taxa names in a phyloseq object}
 \usage{
-taxa_name_summarize(ps_obj, taxa_rank, top_taxa_n = 10)
+taxa_name_summarize(
+  ps_obj,
+  taxa_rank,
+  top_taxa_n = 10,
+  lowest_rank = "species"
+)
 }
 \arguments{
 \item{ps_obj}{Phyloseq object.}
 
 \item{taxa_rank}{Character. The name of phylogenetic rank that will be summarized.}
 
-\item{top_taxa_n}{Numeric. The number of taxa names that will be ratained.}
+\item{top_taxa_n}{Numeric. The number of taxa names that will be retained.}
+
+\item{lowest_rank}{Character. The name of the lowerst taxa rank. Usually this is \code{species}.}
 }
 \value{
 Rarefied phyloseq object (\code{ps_rare }). Summarized taxa names are in the \code{rep_tax} column.

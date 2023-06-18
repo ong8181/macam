@@ -2,6 +2,7 @@
 
 export(AllOrients)
 export(PrimerHits)
+export(assign_ps_barcol)
 export(compute_mvd)
 export(coverage_info)
 export(extended_lnlp)
