@@ -34,10 +34,12 @@ taxa_name_bundle <- function(ps_obj,
       tax_df$tmp_xxxxx <- "Undetermined"
       colnames(tax_df)[ncol(tax_df)] <- new_taxa_rank
       #tax_df <- dplyr::mutate(tax_df, !!new_taxa_rank := "Undetermined")
+      others_name <- c("Others", "Undetermined")
     } else {
       tax_df$tmp_xxxxx <- "Others"
       colnames(tax_df)[ncol(tax_df)] <- new_taxa_rank
       #tax_df <- dplyr::mutate(tax_df, !!new_taxa_rank := "Others")
+      others_name <- c("Others")
     }
   } else {
     stop("colname \'new_taxa_rank\' is used in taxa_name_bundle(). Please rename the colunm name.")
@@ -60,7 +62,6 @@ taxa_name_bundle <- function(ps_obj,
   # Rewrite taxa information
   tax_df_all$tmp_xxxxx <- tax_df[,new_taxa_rank]
   colnames(tax_df_all)[ncol(tax_df_all)] <- new_taxa_rank
-  #tax_df_all <- dplyr::mutate(tax_df_all, !!new_taxa_rank := tax_df[,new_taxa_rank])
   ps_obj2 <- phyloseq::phyloseq(phyloseq::otu_table(ps_obj),
                                 phyloseq::sample_data(ps_obj), phyloseq::tax_table(as.matrix(tax_df_all)))
 
@@ -71,11 +72,13 @@ taxa_name_bundle <- function(ps_obj,
   taxa_abundance_rank <- taxa_abundance_rank[order(taxa_abundance_rank$x, decreasing = T), ]
 
   # Check taxa ranks (except "Others" and "Undetermined")
-  nd_id <- match(c("Others", "Undetermined"), taxa_abundance_rank$Group.1)
+  nd_id <- match(others_name, taxa_abundance_rank$Group.1)
   taxa_top <- taxa_abundance_rank[-nd_id,][1:top_taxa_n,]
   rare_tax <- is.na(match(phyloseq::tax_table(ps_obj2)[, new_taxa_rank],
-                          as.character(taxa_top$Group.1)))
+                          c(as.character(taxa_top$Group.1), others_name)))
   phyloseq::tax_table(ps_obj2)[rare_tax, new_taxa_rank] <- "Others"
+
+  # Return the phyloseq object
   return(ps_obj2)
 }
 
