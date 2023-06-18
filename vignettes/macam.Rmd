@@ -111,11 +111,11 @@ plot_rarefy(ps_rare_raw) +
 tax_table(ps_rare)[,"family"]
 
 # Summarize taxa names and store them "rep_tax" column
-ps_tax_sum <- taxa_name_summarize(ps_rare, "family", top_taxa_n = 10)
+ps_tax_sum <- taxa_name_bundle(ps_rare, "family", top_taxa_n = 10)
 
 # Only 8 taxa names + "Undetermined" + "Others" are kept in the "rep_tax" column
 # Check current family names
-tax_table(ps_tax_sum)[,"rep_tax"] %>%
+tax_table(ps_tax_sum)[,"bundled_tax"] %>%
   as.data.frame %>% unlist %>% unique
 ```
 

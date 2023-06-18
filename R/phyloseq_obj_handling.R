@@ -1,38 +1,52 @@
-#' @title Summarize taxa names in a phyloseq object
-#' @description \code{taxa_name_summarize} summarizes taxa names in a phylosq object for a visualization purpose. Minor taxa names will be summarized as "Others". Also, if the taxa name is empty, the function assigns "Undetermined" for the taxa.
+#' @title Bundle taxa names in a phyloseq object
+#' @description \code{taxa_name_bundle} bundle taxa names in a phylosq object for a visualization purpose. Minor taxa names will be summarized as "Others". Also, if the taxa name is empty, the function assigns "Undetermined" for the taxa.
 #' @importFrom magrittr %>%
 #' @param ps_obj Phyloseq object.
-#' @param taxa_rank Character. The name of phylogenetic rank that will be summarized.
+#' @param taxa_rank_bundled Character. The name of phylogenetic rank that will be bundled.
 #' @param top_taxa_n Numeric. The number of taxa names that will be retained.
-#' @param lowest_rank Character. The name of the lowerst taxa rank. Usually this is `species`.
-#' @return Rarefied phyloseq object (`ps_rare `). Summarized taxa names are in the `rep_tax` column.
+#' @param new_taxa_rank Character. The name of the bundled taxa rank. Default is `bundled_tax`.
+#' @param taxa_rank_list Character vector. The specified taxa ranks are used to determine whether a tax is "Undetermined" or not.
+#' @param add_undet Logical. If TRUE, "Undetermined" is assigned to undetermined taxa. If FALSE, "Others" is assigned.
+#' @return Phyloseq object. Bundled taxa names are in the `new_taxa_rank` column.
 #' @export
 #' @examples
-#' # taxa_name_summarize(ps_obj, "phylum", top_taxa_n = 10)
-taxa_name_summarize <- function(ps_obj,
-                                taxa_rank,
-                                top_taxa_n = 10,
-                                lowest_rank = "species") {
-  tax_df <- as.data.frame(phyloseq::tax_table(ps_obj))
-
-  # Check lowest_rank name
-  if (!(lowest_rank %in% colnames(tax_df))) {
-    stop(sprintf("column \'%s\' was not found. Please define the colunm name of the lowest rank.", lowest_rank))
-  }
+#' # taxa_name_bundle(ps_obj, "phylum", top_taxa_n = 10)
+taxa_name_bundle <- function(ps_obj,
+                             taxa_rank_bundled,
+                             top_taxa_n = 10,
+                             new_taxa_rank = "bundled_tax",
+                             taxa_rank_list = c("superkingdom",
+                                                "kingdom",
+                                                "phylum",
+                                                "order",
+                                                "family",
+                                                "genus",
+                                                "species"),
+                             add_undet = TRUE) {
+  tax_df_all <- as.data.frame(phyloseq::tax_table(ps_obj))
+  tax_df <- tax_df_all[,taxa_rank_list]
+  # Warning message
+  message(sprintf("Please ensure that there is no information other than taxa names in the columns between \'%s\' and \'%s\'.", taxa_rank_list[1], rev(taxa_rank_list)[1]))
 
   # Check rep_tax name
-  if (!("rep_tax" %in% colnames(tax_df))) {
-    tax_df$rep_tax <- "Undetermined"
+  if (!(new_taxa_rank %in% colnames(tax_df))) {
+    if (add_undet) {
+      tax_df$tmp_xxxxx <- "Undetermined"
+      colnames(tax_df)[ncol(tax_df)] <- new_taxa_rank
+      #tax_df <- dplyr::mutate(tax_df, !!new_taxa_rank := "Undetermined")
+    } else {
+      tax_df$tmp_xxxxx <- "Others"
+      colnames(tax_df)[ncol(tax_df)] <- new_taxa_rank
+      #tax_df <- dplyr::mutate(tax_df, !!new_taxa_rank := "Others")
+    }
   } else {
-    stop("colname \'rep_tax\' is used in taxa_name_summarize(). Please rename the colunm name.")
+    stop("colname \'new_taxa_rank\' is used in taxa_name_bundle(). Please rename the colunm name.")
   }
 
-  # Warning message
-  message(sprintf("Please ensure that there is no information other than taxa names in the columns between \'%s\' and \'%s\'.", taxa_rank, lowest_rank))
-
-  rep_tax_cond1 <- tax_df[, taxa_rank] == "" | is.na(tax_df[, taxa_rank])
-  tax_col1 <- which(colnames(tax_df) == taxa_rank)
-  tax_col2 <- which(colnames(tax_df) == "species")
+  # Identify NA or blank elements in taxa_rank_bundled
+  rep_tax_cond1 <- tax_df[, taxa_rank_bundled] == "" | is.na(tax_df[, taxa_rank_bundled])
+  tax_col1 <- which(colnames(tax_df) == taxa_rank_bundled)
+  tax_col2 <- which(colnames(tax_df) == rev(taxa_rank_list)[1])
 
   # Identify rows of which cells between target and species columns are all NA or blank
   na_cond1 <- tax_df[, (tax_col1+1):tax_col2] == ""
@@ -40,19 +54,28 @@ taxa_name_summarize <- function(ps_obj,
   rep_tax_cond2 <- apply(na_cond1 | na_cond2, 1, sum) == (tax_col2 - tax_col1)
 
   # Add representative taxa information
-  tax_df[!rep_tax_cond1, "rep_tax"] <- as.character(tax_df[!rep_tax_cond1, taxa_rank])
-  tax_df[rep_tax_cond1 & !rep_tax_cond2, "rep_tax"] <- "Others"
-  ps_obj2 <- phyloseq::phyloseq(phyloseq::otu_table(ps_obj),
-                                phyloseq::sample_data(ps_obj), phyloseq::tax_table(as.matrix(tax_df)))
+  tax_df[!rep_tax_cond1, new_taxa_rank] <- as.character(tax_df[!rep_tax_cond1, taxa_rank_bundled])
+  tax_df[rep_tax_cond1 & !rep_tax_cond2, new_taxa_rank] <- "Others"
 
+  # Rewrite taxa information
+  tax_df_all$tmp_xxxxx <- tax_df[,new_taxa_rank]
+  colnames(tax_df_all)[ncol(tax_df_all)] <- new_taxa_rank
+  #tax_df_all <- dplyr::mutate(tax_df_all, !!new_taxa_rank := tax_df[,new_taxa_rank])
+  ps_obj2 <- phyloseq::phyloseq(phyloseq::otu_table(ps_obj),
+                                phyloseq::sample_data(ps_obj), phyloseq::tax_table(as.matrix(tax_df_all)))
+
+  # Assign "Others" to rare taxa
   taxa_abundance_rank <- stats::aggregate(phyloseq::taxa_sums(ps_obj2),
-                                          by = list(phyloseq::tax_table(ps_obj2)[, "rep_tax"]),
+                                          by = list(phyloseq::tax_table(ps_obj2)[, new_taxa_rank]),
                                           sum)
   taxa_abundance_rank <- taxa_abundance_rank[order(taxa_abundance_rank$x, decreasing = T), ]
-  taxa_top <- taxa_abundance_rank[1:top_taxa_n, ]
-  low_tax <- is.na(match(phyloseq::tax_table(ps_obj2)[, "rep_tax"],
-                         as.character(taxa_top[, 1])))
-  phyloseq::tax_table(ps_obj2)[low_tax, "rep_tax"] <- "Others"
+
+  # Check taxa ranks (except "Others" and "Undetermined")
+  nd_id <- match(c("Others", "Undetermined"), taxa_abundance_rank$Group.1)
+  taxa_top <- taxa_abundance_rank[-nd_id,][1:top_taxa_n,]
+  rare_tax <- is.na(match(phyloseq::tax_table(ps_obj2)[, new_taxa_rank],
+                          as.character(taxa_top$Group.1)))
+  phyloseq::tax_table(ps_obj2)[rare_tax, new_taxa_rank] <- "Others"
   return(ps_obj2)
 }
 
