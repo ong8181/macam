@@ -100,14 +100,14 @@ assign_ps_barcol <- function(gg_obj,
   # Assign others' colors
   col_code[(fill_n-other_n+1):fill_n] <- other_col
 
+  # Re-order taxa names
+  other_id <- match(other_name, fill_name)
+  tax_levels <- c(sort(fill_name[-other_id]), fill_name[other_id])
+  gg_obj$data[,fill_var_name] <- factor(gg_obj$data[,fill_var_name], levels = tax_levels)
+
   # Assign colors
   if (is.null(legend_title)) legend_title <- fill_var_name
   gg_obj <- gg_obj + ggplot2::scale_fill_manual(values = col_code, name = legend_title)
-
-  # Re-order taxa names
-  other_id <- match(other_name, fill_name)
-  tax_levels <- c(fill_name[-other_id], fill_name[other_id])
-  gg_obj$data[,fill_var_name] <- factor(gg_obj$data[,fill_var_name], levels = tax_levels)
 
   # Return gg_obj
   return(gg_obj)
