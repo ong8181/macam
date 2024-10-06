@@ -116,7 +116,7 @@ sample_sums(ps_rare2)
 sample_data(ps_rare2)
 
 # Visualize rarefaction curve
-plot_rarefy2(ps_rare_raw2) +
+plot_rarefy2(ps_rare_raw2, plot_rarefied_point = TRUE, plot_slope = TRUE) +
   coord_cartesian(xlim = c(0, 4000))
 ```
 

@@ -228,7 +228,7 @@ rarefy_even_coverage2 <- function(ps_obj,
     }
 
     # Collect information
-    rcurve_df <- vegan::rarecurve(com_mat2, step = rareplot_step_size, tidy = TRUE)
+    rcurve_df <- suppressWarnings(vegan::rarecurve(com_mat2, step = rareplot_step_size, tidy = TRUE))
     rpoint_df <- data.frame(sample = rownames(sam_tbl2),
                             rarefied_slope = 1 - sam_tbl2$rarefied_coverage,
                             rarefied_reads = sam_tbl2$rarefied_reads,
