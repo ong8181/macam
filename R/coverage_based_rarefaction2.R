@@ -2,7 +2,6 @@
 #' @description \code{coverage_info2} Calculate coverage information of a phyloseq object
 #' @param ps_obj Phyloseq object.
 #' @return data.frame or list.
-#' @details
 #' @export
 #' @examples
 #' # coverage_info2(ps_obj)
@@ -53,7 +52,6 @@ coverage_info2 <- function (ps_obj) {
 #' @param ran_seed Numeric. Random seed.
 #' @return Rarefied phyloseq object (`ps_rare`). If `include_rarecurve_results = TRUE`, `rarecurve` results are stored in the second element of the list.
 #' @export
-#' @details
 #' @examples
 #' # rarefy_even_coverage(ps_obj, coverage = 0.97)
 rarefy_even_coverage2 <- function(ps_obj,
@@ -85,7 +83,7 @@ rarefy_even_coverage2 <- function(ps_obj,
   sam_tbl <- phyloseq::sample_data(ps_obj) %>% as.data.frame()
   all_names <- phyloseq::sample_names(ps_obj)
 
-  if (any(!sample_sums(ps_obj) > 0)) {
+  if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
     # Store the original object with "zero" samples
     com_mat0 <- com_mat
     sam_tbl0 <- sam_tbl
@@ -131,7 +129,7 @@ rarefy_even_coverage2 <- function(ps_obj,
       cvr_df$n_reads[i] <- rareslopelist[[i]]$n_reads[cvrrare[i]]
       cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads[i]))
     } else {
-      cvr_df$n_reads[i] <- tail(rareslopelist[[i]]$n_reads, n = 1)
+      cvr_df$n_reads[i] <- utils::tail(rareslopelist[[i]]$n_reads, n = 1)
       cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads[i]))
     }
     # Use coverage_to_samplesize
@@ -171,7 +169,7 @@ rarefy_even_coverage2 <- function(ps_obj,
   sam_tbl$rarefied_reads <- cvr_df$n_reads
   sam_tbl$rarefied_n_taxa <- rowSums(rarefied_df > 0)
 
-  if (any(!sample_sums(ps_obj) > 0)) {
+  if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
     # Curate data of the oringal OTU table
     sam_tbl0$original_reads <- rowSums(com_mat0)
     sam_tbl0$original_n_taxa <- rowSums(com_mat0 > 0)
@@ -233,7 +231,7 @@ rarefy_even_coverage2 <- function(ps_obj,
     rcurve_df <- vegan::rarecurve(com_mat2, step = rareplot_step_size, tidy = TRUE)
     rpoint_df <- data.frame(sample = rownames(sam_tbl2),
                             rarefied_slope = 1 - sam_tbl2$rarefied_coverage,
-                            rarefied_n_reads = sam_tbl2$rarefied_reads,
+                            rarefied_reads = sam_tbl2$rarefied_reads,
                             rarefied_n_taxa = sam_tbl2$rarefied_n_taxa,
                             predicted_n_taxa = NA)
     for(i in 1:nrow(cvr_df)){
@@ -271,19 +269,17 @@ plot_rarefy2 <- function (ps_obj,
   rcurve_df <- ps_obj[[2]]$rcurve_df
   rpoint_df <- ps_obj[[2]]$rpoint_df
   slope_vals <- rpoint_df$rarefied_slope
-  intercept_vals <- rpoint_df$predicted_n_taxa - rpoint_df$rarefied_n_reads * rpoint_df$rarefied_slope
+  intercept_vals <- rpoint_df$predicted_n_taxa - rpoint_df$rarefied_reads * rpoint_df$rarefied_slope
 
   # Visualize
   g_rare <- rcurve_df %>%
-    ggplot2::ggplot(ggplot2::aes(x = Sample, y = Species, color = Site)) + ggplot2::geom_line() +
-    NULL
+    ggplot2::ggplot(ggplot2::aes(x = Sample, y = Species, color = Site)) + ggplot2::geom_line()
 
   # Add rarefied points
   if (plot_rarefied_point) {
     g_rare <- g_rare +
-      ggplot2::geom_point(data = rpoint_df, ggplot2::aes(x = rarefied_n_reads, y = predicted_n_taxa),
-                          color = "gray30", alpha = 0.6) +
-      NULL
+      ggplot2::geom_point(data = rpoint_df, ggplot2::aes(x = rarefied_reads, y = predicted_n_taxa),
+                          color = "gray30", alpha = 0.6)
   }
 
   # Add slopes
@@ -291,8 +287,7 @@ plot_rarefy2 <- function (ps_obj,
     g_rare <- g_rare +
       ggplot2::geom_abline(slope = slope_vals,
                            intercept = intercept_vals, color = "gray60",
-                           linetype = linetype, linewidth = 0.3, alpha = 0.5) +
-      NULL
+                           linetype = linetype, linewidth = 0.3, alpha = 0.5)
   }
 
   return(g_rare)

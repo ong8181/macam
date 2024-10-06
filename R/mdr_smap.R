@@ -2,7 +2,6 @@
 #' @description \code{uic_across} Perform UIC for a target variable and multiple causal variables
 #' @param block Data.frame contains time series data.
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
-#' @param uic_method Character. `optimal` or `marginal`. For detail, see https://github.com/yutakaos/rUIC.
 #' @param E_range Numeric. Embedding dimensions that will be tested.
 #' @param tp_range Numeric. `tp` tested for UIC.
 #' @param silent Logical. if `TRUE`, progress message will not be shown.
@@ -14,7 +13,6 @@
 #' @export
 uic_across <- function(block,
                        effect_var,
-                       uic_method = "optimal",
                        E_range = 0:10,
                        tp_range = -4:0,
                        #random_seed = 1234,
@@ -29,7 +27,6 @@ uic_across <- function(block,
   if (!all(unique(x_names) == x_names)) stop("\"block\" should have unique column names.")
   if (!is.data.frame(block)) stop("\"block\" should be data.frame.")
   if (!is.numeric(E_range) | !is.numeric(tp_range)) stop("\"E_range\" and \"tp_range\" should be numeric.")
-  if (uic_method != "optimal" & uic_method != "marginal") stop("\"uic_method\" should be \"optimal\" or \"marginal\".")
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
 
   # ---------------------------------------------------- #
@@ -42,36 +39,19 @@ uic_across <- function(block,
   # Identify causal relationship using rUIC
   # ---------------------------------------------------- #
   ## Perform UIC for all pairs
-  if (uic_method == "optimal") {
     # ---------------------------------------------------- #
     # uic.optimal()
     # ---------------------------------------------------- #
-    for (y_i in x_names[x_names != effect_var]) {
-      time_start <- proc.time()
-      # Testing the effect of "y_i" on "effect_var" using uic.optimal()
-      uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
-        dplyr::mutate(effect_var = effect_var, cause_var = y_i)
-      # Combine results
-      if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
-      # Output message
-      time_used <- (proc.time() - time_start)[3]
-      if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
-    }
-  } else if (uic_method == "marginal") {
-    # ---------------------------------------------------- #
-    # uic.marginal()
-    # ---------------------------------------------------- #
-    for (y_i in x_names[x_names != effect_var]) {
-      time_start <- proc.time()
-      # Testing the effect of "y_i" on "effect_var" using uic.marginal()
-      uic_xy <- rUIC::uic.marginal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
-        dplyr::mutate(effect_var = effect_var, cause_var = y_i)
-      # Combine results
-      if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
-      # Output message
-      time_used <- (proc.time() - time_start)[3]
-      if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
-    }
+  for (y_i in x_names[x_names != effect_var]) {
+    time_start <- proc.time()
+    # Testing the effect of "y_i" on "effect_var" using uic.optimal()
+    uic_xy <- rUIC::uic.optimal(block, lib_var = effect_var, tar_var = y_i, E = E_range, tau = 1, tp = tp_range) %>%
+      dplyr::mutate(effect_var = effect_var, cause_var = y_i)
+    # Combine results
+    if (y_i != x_names[x_names != effect_var][1]) { uic_res <- rbind(uic_res, uic_xy) } else { uic_res <- uic_xy }
+    # Output message
+    time_used <- (proc.time() - time_start)[3]
+    if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
   }
 
   # Message
@@ -135,7 +115,7 @@ make_block_mvd <- function (block,
     colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
   }
   # Pre-screening (p & tp)
-  if (!silent) message("UIC results with `tp` <= 0 and `pval` <= 0.05 are kept for further analyses.")
+  if (!silent) message(sprintf("UIC results with `tp` <= 0 and `pval` <= %s are kept for further analyses.", p_threshold))
   uic_res <- uic_res[uic_res$pval <= p_threshold & uic_res$tp <= 0,]
   if (nrow(uic_res) < 1) stop("No significant causal variables were detected. Please use the univariate S-map.")
 

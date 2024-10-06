@@ -122,7 +122,7 @@ rarefy_even_coverage <-  function(ps_obj,
   # Check whether (specified coverage) < (max coverage)
   rarefy_id <- (coverage < inext_max_sc)
   if (all(!rarefy_id)) {
-    stop("Depths of all samples were not sufficient for the rarefaction! Try a decreased coverage.")
+    stop("Depths of all the samples were not sufficient for the rarefaction! Try a decreased coverage.")
   }
 
   # Do iNEXT
@@ -231,7 +231,7 @@ rarefy_even_coverage <-  function(ps_obj,
     # Remove not-rarefied samples
     ps_rare <- phyloseq::prune_samples(all_names[rarefy_id], ps_rare)
     # Return rarefied phyloseq object
-    message("Rarefied samples were removed from output as you specified.")
+    message("Not-rarefied samples were removed from output as you specified.")
   } else {
     # Return rarefied phyloseq object
     message2 <- "Rarefied/not-rarefied samples were kept in the phyloseq object."

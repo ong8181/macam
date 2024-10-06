@@ -76,7 +76,7 @@ taxa_name_bundle <- function(ps_obj,
   if (all(is.na(nd_id))) {
     taxa_top <- taxa_abundance_rank[1:top_taxa_n, ]
   } else {
-    nd_id <- na.omit(nd_id)
+    nd_id <- stats::na.omit(nd_id)
     taxa_top <- taxa_abundance_rank[-nd_id, ][1:top_taxa_n, ]
   }
   rare_tax <- is.na(match(phyloseq::tax_table(ps_obj2)[, new_taxa_rank],

@@ -2,7 +2,7 @@
 % Please edit documentation in R/coverage_based_rarefaction.R
 \name{coverage_info}
 \alias{coverage_info}
-\title{Obtaining coverage information of a phyloseq object}
+\title{Calculate coverage information of a phyloseq object}
 \usage{
 coverage_info(ps_obj, datatype = "abundance", estimate_div = FALSE)
 }

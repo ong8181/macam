@@ -86,7 +86,7 @@ ps_sample <- ps_all %>%
 sample_sums(ps_sample)
 
 # ----------------------------------------------- #
-# Perform coverage-based rarefaction
+# Perform coverage-based rarefaction using iNEXT package
 # ----------------------------------------------- #
 set.seed(1234)
 ps_rare_raw <- rarefy_even_coverage(ps_sample,
@@ -98,10 +98,25 @@ ps_rare <- ps_rare_raw[[1]] # Extract phyloseq object
 sample_sums(ps_rare)
 sample_data(ps_rare)
 
-# ----------------------------------------------- #
 # Visualize rarefaction curve
-# ----------------------------------------------- #
 plot_rarefy(ps_rare_raw) +
+  coord_cartesian(xlim = c(0, 4000))
+
+
+# ----------------------------------------------- #
+# Perform coverage-based rarefaction using vegan package
+# ----------------------------------------------- #
+ps_rare_raw2 <- rarefy_even_coverage2(ps_sample,
+                                     coverage = 0.97,
+                                     include_rarecurve_results = TRUE,
+                                     knots = 3000,
+                                     rareplot_step_size = 100)
+ps_rare2 <- ps_rare_raw2[[1]] # Extract phyloseq object
+sample_sums(ps_rare2)
+sample_data(ps_rare2)
+
+# Visualize rarefaction curve
+plot_rarefy2(ps_rare_raw2) +
   coord_cartesian(xlim = c(0, 4000))
 ```
 

@@ -4,21 +4,12 @@
 \alias{uic_across}
 \title{Perform UIC across data.frame}
 \usage{
-uic_across(
-  block,
-  effect_var,
-  uic_method = "optimal",
-  E_range = 0:10,
-  tp_range = -4:0,
-  silent = FALSE
-)
+uic_across(block, effect_var, E_range = 0:10, tp_range = -4:0, silent = FALSE)
 }
 \arguments{
 \item{block}{Data.frame contains time series data.}
 
 \item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
-
-\item{uic_method}{Character. \code{optimal} or \code{marginal}. For detail, see https://github.com/yutakaos/rUIC.}
 
 \item{E_range}{Numeric. Embedding dimensions that will be tested.}
 
