@@ -1,4 +1,4 @@
-#' @title Obtaining coverage information of a phyloseq object
+#' @title Calculate coverage information of a phyloseq object
 #' @description \code{coverage_info} a wrapper function of `iNEXT::DataInfo()` for a phyloseq object
 #' @param ps_obj Phyloseq object.
 #' @param datatype Character. Specify the data type. `abundance` or `incidence` (this should be normally `abundance` for a phyloseq object).
