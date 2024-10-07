@@ -85,12 +85,9 @@ rarefy_even_coverage2 <- function(ps_obj,
 
   if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
     # Store the original object with "zero" samples
-    com_mat0 <- com_mat
-    sam_tbl0 <- sam_tbl
-    all_names0 <- all_names
+    com_mat0 <- com_mat; sam_tbl0 <- sam_tbl; all_names0 <- all_names
     # Extract non-zero samples
     non_zero_sample <- rownames(com_mat[rowSums(com_mat) > 0,])
-    #zero_sample <- rownames(com_mat[rowSums(com_mat) == 0,])
     com_mat <- com_mat[non_zero_sample,]
     sam_tbl <- sam_tbl[non_zero_sample,]
     all_names <- all_names[rowSums(com_mat0) > 0]
@@ -117,8 +114,6 @@ rarefy_even_coverage2 <- function(ps_obj,
   cvr_df <- data.frame(sample = rownames(com_mat),
                        n_reads_id = cvrrare,
                        rarefy = is.finite(cvrrare),
-                       #n_reads_inext = NA,
-                       #coverage_inext = NA,
                        n_reads = NA,
                        coverage = NA)
   rarefy_id <- is.finite(cvrrare)
@@ -132,9 +127,6 @@ rarefy_even_coverage2 <- function(ps_obj,
       cvr_df$n_reads[i] <- utils::tail(rareslopelist[[i]]$n_reads, n = 1)
       cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads[i]))
     }
-    # Use coverage_to_samplesize
-    #cvr_df$n_reads_inext[i] <- macamseq:::coverage_to_samplesize(com_mat[i,], coverage = coverage)
-    #cvr_df$coverage_inext[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads_inext[i]))
   }
 
   # Get rarefied OTU table
@@ -164,24 +156,29 @@ rarefy_even_coverage2 <- function(ps_obj,
   # Add sample information
   sam_tbl$original_reads <- rowSums(com_mat)
   sam_tbl$original_n_taxa <- rowSums(com_mat > 0)
+  for (i in 1:nrow(cvr_df)) {
+    sam_tbl$original_coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], sum(com_mat[i,]) - 1))
+  }
   sam_tbl$rarefied <- cvr_df$rarefy
-  sam_tbl$rarefied_coverage <- cvr_df$coverage
   sam_tbl$rarefied_reads <- cvr_df$n_reads
   sam_tbl$rarefied_n_taxa <- rowSums(rarefied_df > 0)
+  sam_tbl$rarefied_coverage <- cvr_df$coverage
 
   if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
-    # Curate data of the oringal OTU table
+    # Curate data of the original OTU table
     sam_tbl0$original_reads <- rowSums(com_mat0)
     sam_tbl0$original_n_taxa <- rowSums(com_mat0 > 0)
+    sam_tbl0$original_coverage <- NA
     # Replace elements of non-zero samples in the original objects
     com_mat0[rownames(rarefied_df),] <- rarefied_df
-    sam_tbl0$rarefied_n_taxa <- rowSums(com_mat0 > 0)
     sam_tbl0$rarefied <- FALSE
-    sam_tbl0$rarefied_coverage <- NA
     sam_tbl0$rarefied_reads <- 0
+    sam_tbl0$rarefied_n_taxa <- rowSums(com_mat0 > 0)
+    sam_tbl0$rarefied_coverage <- NA
+    sam_tbl0[rownames(rarefied_df),]$original_coverage <- sam_tbl$original_coverage
     sam_tbl0[rownames(rarefied_df),]$rarefied <- cvr_df$rarefy
-    sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- cvr_df$coverage
     sam_tbl0[rownames(rarefied_df),]$rarefied_reads <- cvr_df$n_reads
+    sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- cvr_df$coverage
 
     # Replace data in the phyloseq object
     sam_tbl <- sam_tbl0
