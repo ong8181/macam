@@ -10,8 +10,10 @@ make_block_mvd(
   effect_var,
   E_effect_var,
   cause_var_colname = "cause_var",
-  include_var = "strongest_only",
+  th_var_colname = "pval",
   p_threshold = 0.05,
+  include_var = "strongest_only",
+  tp_adjust = NULL,
   sort_tp = TRUE,
   silent = FALSE
 )
@@ -27,9 +29,13 @@ make_block_mvd(
 
 \item{cause_var_colname}{Character. A column name for causal variables in \code{uic_res}.}
 
-\item{include_var}{Character. \code{all_significant}, \code{strongest_only}, or \code{tp0_only}. If \code{all_significant}, all significantly influencing variables are used for the embedding. If \code{strongest_only}, tp with the strongest influence for each variable is used. If \code{tp0_only}, only variables with no time-delay are used.}
+\item{th_var_colname}{Character. A column name for a threshold to choose causal variables in \code{uic_res}.}
 
 \item{p_threshold}{Numeric. Rows with pval larger than \code{p_threshold} is removed.}
+
+\item{include_var}{Character. \code{all_significant}, \code{strongest_only}, or \code{tp0_only}. If \code{all_significant}, all significantly influencing variables are used for the embedding. If \code{strongest_only}, tp with the strongest influence for each variable is used. If \code{tp0_only}, only variables with no time-delay are used.}
+
+\item{tp_adjust}{NULL or numeric. Adjust tp values.}
 
 \item{sort_tp}{Logical. If TRUE, \code{block_mvd} is sorted according to \code{tp} for each causal variable.}
 

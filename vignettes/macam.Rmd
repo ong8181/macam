@@ -185,7 +185,7 @@ data(data_4sp)
 
 # Standardize data
 data_4sp_std <- as.data.frame(apply(data_4sp, 2, function(x) as.numeric(scale(x))))
-effect_var <- "Trachurus.japonicus"
+effect_var <- "Sebastes.inermis"
 
 # Step. 1: Estimate optimal embeding dimension
 simp_x <- rUIC::simplex(data_4sp_std, lib_var = effect_var, E = 0:10, tp = 1)
@@ -195,7 +195,7 @@ simp_x <- rUIC::simplex(data_4sp_std, lib_var = effect_var, E = 0:10, tp = 1)
 uic_res <- uic_across(data_4sp_std, effect_var, E_range = 0:10, tp_range = -12:0, silent = TRUE)
 
 # Step 3: Make block to calculate multiview distance
-block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant")
+block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant", p_threshold = 0.05)
 
 # Step. 4: Compute multiview distance
 multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
@@ -207,13 +207,13 @@ mdr_res <- s_map_mdr(block_mvd,
                      tp = 1,
                      regularized = FALSE,
                      save_smap_coefficients = TRUE)
-mdr_res$stats # rho = 0.592; rmse = 0.742
+mdr_res$stats # rho = 0.498; rmse = 0.760
 
 # Compare with the normal S-map
 smap_res <- rEDM::block_lnlp(data_4sp_std, target_column = effect_var,
                  method = "s-map", theta = 1, tp = 1, stats_only = F)
-smap_res$rho # rho = 0.573
-smap_res$rmse # rho = 0.824
+smap_res$rho # rho = 0.434
+smap_res$rmse # rmse = 0.780
 
 # An all-in-one wrapper function
 all_res <- s_map_mdr_all(data_4sp_std, effect_var, theta = 1, tp = 1)

@@ -156,9 +156,7 @@ rarefy_even_coverage2 <- function(ps_obj,
   # Add sample information
   sam_tbl$original_reads <- rowSums(com_mat)
   sam_tbl$original_n_taxa <- rowSums(com_mat > 0)
-  for (i in 1:nrow(cvr_df)) {
-    sam_tbl$original_coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], sum(com_mat[i,]) - 1))
-  }
+  for (i in 1:nrow(cvr_df)) sam_tbl$original_coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], sum(com_mat[i,]) - 1))
   sam_tbl$rarefied <- cvr_df$rarefy
   sam_tbl$rarefied_reads <- cvr_df$n_reads
   sam_tbl$rarefied_n_taxa <- rowSums(rarefied_df > 0)
