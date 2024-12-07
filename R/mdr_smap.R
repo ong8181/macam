@@ -7,6 +7,7 @@
 #' @param tau Numeric. `tau` tested for UIC.
 #' @param num_surr Numeric. The number of surrogate data generated to compute p-value.
 #' @param alpha Numeric. the significant level to determine the embedding dimension of reference model (i.e., `E0`). If `alpha = NULL`, `E0` is set to `E - 1`. If `0 < alpha < 1` `E0` depends on the model results with lower embedding dimensions. Default is 0.05.
+#' @param fdr Logical. If `TRUE`, calculate False Discovery Rate using `stats::p.adjust()` and BH method.
 #' @param silent Logical. if `TRUE`, progress message will not be shown.
 #' @return A data.frame that contains UIC results
 #' @details
@@ -21,6 +22,7 @@ uic_across <- function(block,
                        tau = 1,
                        num_surr = 1000,
                        alpha = 0.05,
+                       fdr = FALSE,
                        #random_seed = 1234,
                        silent = FALSE) {
   # Set random seed
@@ -60,8 +62,10 @@ uic_across <- function(block,
     if (!silent) { message(sprintf("Effects from %s to %s tested by UIC: %.2f sec elapsed", y_i, effect_var, time_used)) }
   }
 
-  # Add FDR ("BH" method)
-  uic_res$fdr <- stats::p.adjust(uic_xy$pval, method = "BH")
+  if (fdr) {
+    # Add FDR ("BH" method)
+    uic_res$fdr <- stats::p.adjust(uic_res$pval, method = "BH")
+  }
 
   # Message
   if (!silent) {

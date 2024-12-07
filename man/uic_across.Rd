@@ -12,6 +12,7 @@ uic_across(
   tau = 1,
   num_surr = 1000,
   alpha = 0.05,
+  fdr = FALSE,
   silent = FALSE
 )
 }
@@ -29,6 +30,8 @@ uic_across(
 \item{num_surr}{Numeric. The number of surrogate data generated to compute p-value.}
 
 \item{alpha}{Numeric. the significant level to determine the embedding dimension of reference model (i.e., \code{E0}). If \code{alpha = NULL}, \code{E0} is set to \code{E - 1}. If \verb{0 < alpha < 1} \code{E0} depends on the model results with lower embedding dimensions. Default is 0.05.}
+
+\item{fdr}{Logical. If \code{TRUE}, calculate False Discovery Rate using \code{stats::p.adjust()} and BH method.}
 
 \item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
