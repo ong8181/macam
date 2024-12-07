@@ -4,7 +4,16 @@
 \alias{uic_across}
 \title{Perform UIC across data.frame}
 \usage{
-uic_across(block, effect_var, E_range = 0:10, tp_range = -4:0, silent = FALSE)
+uic_across(
+  block,
+  effect_var,
+  E_range = 0:10,
+  tp_range = -4:0,
+  tau = 1,
+  num_surr = 1000,
+  alpha = 0.05,
+  silent = FALSE
+)
 }
 \arguments{
 \item{block}{Data.frame contains time series data.}
@@ -14,6 +23,12 @@ uic_across(block, effect_var, E_range = 0:10, tp_range = -4:0, silent = FALSE)
 \item{E_range}{Numeric. Embedding dimensions that will be tested.}
 
 \item{tp_range}{Numeric. \code{tp} tested for UIC.}
+
+\item{tau}{Numeric. \code{tau} tested for UIC.}
+
+\item{num_surr}{Numeric. The number of surrogate data generated to compute p-value.}
+
+\item{alpha}{Numeric. the significant level to determine the embedding dimension of reference model (i.e., \code{E0}). If \code{alpha = NULL}, \code{E0} is set to \code{E - 1}. If \verb{0 < alpha < 1} \code{E0} depends on the model results with lower embedding dimensions. Default is 0.05.}
 
 \item{silent}{Logical. if \code{TRUE}, progress message will not be shown.}
 }
