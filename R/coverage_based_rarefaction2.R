@@ -180,7 +180,7 @@ rarefy_even_coverage2 <- function(ps_obj,
     sam_tbl0[rownames(rarefied_df),]$rarefied <- cvr_df$rarefy
     sam_tbl0[rownames(rarefied_df),]$rarefied_reads <- cvr_df$n_reads
     sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- cvr_df$coverage
-    sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- sam_tbl$rarefied_pred_n_taxa
+    sam_tbl0[rownames(rarefied_df),]$rarefied_pred_n_taxa <- sam_tbl$rarefied_pred_n_taxa
 
     # Replace data in the phyloseq object
     sam_tbl <- sam_tbl0
@@ -201,7 +201,7 @@ rarefy_even_coverage2 <- function(ps_obj,
     message1 <- sprintf("Following samples were NOT rarefied because of the low coverage: %s\n",
                         all_names[!rarefy_id] %>% paste(collapse = " "))
   } else {
-    message1 <- "All samples were successfully rarefied!\n"
+    message1 <- "All non-zero samples were successfully rarefied!\n"
   }
   message(message1)
 

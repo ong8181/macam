@@ -83,6 +83,11 @@ rarefy_even_coverage <-  function(ps_obj,
                                   sample_method = "phyloseq",
                                   ran_seed = 1234
 ){
+  # Check data
+  if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
+    stop("Some samples contain no reads. Please remove them.")
+  }
+
   # Check arguments
   if (!(remove_not_rarefied %in% c(TRUE, FALSE))) {
     stop("Invalid \'remove_not_rarefied\'. Should be TRUE or FALSE.")
