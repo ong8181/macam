@@ -211,10 +211,11 @@ rarefy_even_coverage <-  function(ps_obj,
                   original_coverage = inext_max_sc,
                   rarefied_reads = phyloseq::sample_sums(ps_rare),
                   rarefied_n_taxa = rowSums(phyloseq::otu_table(ps_rare) > 0),
-                  rarefied_pred_n_taxa = rrlist %>% purrr::pmap(function(x,y) suppressWarnings(vegan::rarefy(x, y))) %>% unlist,
+                  rarefied_pred_n_taxa = NA,
                   rarefied_coverage = NA,
                   correct_singletons = correct_singletons)
   phyloseq::sample_data(ps_rare)[rarefy_id,"rarefied_coverage"] <- inext_coverage
+  phyloseq::sample_data(ps_rare)[rarefy_id,"rarefied_pred_n_taxa"] <- rrlist %>% purrr::pmap(function(x,y) suppressWarnings(vegan::rarefy(x, y))) %>% unlist
 
   # Output message
   if (any(!rarefy_id)) {
