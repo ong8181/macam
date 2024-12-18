@@ -161,6 +161,8 @@ rarefy_even_coverage2 <- function(ps_obj,
   sam_tbl$rarefied_reads <- cvr_df$n_reads
   sam_tbl$rarefied_n_taxa <- rowSums(rarefied_df > 0)
   sam_tbl$rarefied_coverage <- cvr_df$coverage
+  sam_tbl$rarefied_pred_n_taxa <- NA
+  for(i in 1:nrow(cvr_df)) sam_tbl$rarefied_pred_n_taxa[i] <- suppressWarnings(vegan::rarefy(com_mat[i,], cvr_df$n_reads[i]))
 
   if (any(!phyloseq::sample_sums(ps_obj) > 0)) {
     # Curate data of the original OTU table
@@ -173,10 +175,12 @@ rarefy_even_coverage2 <- function(ps_obj,
     sam_tbl0$rarefied_reads <- 0
     sam_tbl0$rarefied_n_taxa <- rowSums(com_mat0 > 0)
     sam_tbl0$rarefied_coverage <- NA
+    sam_tbl0$rarefied_pred_n_taxa <- NA
     sam_tbl0[rownames(rarefied_df),]$original_coverage <- sam_tbl$original_coverage
     sam_tbl0[rownames(rarefied_df),]$rarefied <- cvr_df$rarefy
     sam_tbl0[rownames(rarefied_df),]$rarefied_reads <- cvr_df$n_reads
     sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- cvr_df$coverage
+    sam_tbl0[rownames(rarefied_df),]$rarefied_coverage <- sam_tbl$rarefied_pred_n_taxa
 
     # Replace data in the phyloseq object
     sam_tbl <- sam_tbl0
@@ -228,9 +232,9 @@ rarefy_even_coverage2 <- function(ps_obj,
                             rarefied_slope = 1 - sam_tbl2$rarefied_coverage,
                             rarefied_reads = sam_tbl2$rarefied_reads,
                             rarefied_n_taxa = sam_tbl2$rarefied_n_taxa,
-                            predicted_n_taxa = NA)
+                            rarefied_pred_n_taxa = NA)
     for(i in 1:nrow(cvr_df)){
-      rpoint_df$predicted_n_taxa[i] <- suppressWarnings(vegan::rarefy(com_mat2[i,], cvr_df$n_reads[i]))
+      rpoint_df$rarefied_pred_n_taxa[i] <- suppressWarnings(vegan::rarefy(com_mat2[i,], cvr_df$n_reads[i]))
     }
     # Compile phyloseq object
     ps_rare <- phyloseq::prune_taxa(phyloseq::taxa_sums(ps_rare) > 0, ps_rare)
@@ -264,7 +268,7 @@ plot_rarefy2 <- function (ps_obj,
   rcurve_df <- ps_obj[[2]]$rcurve_df
   rpoint_df <- ps_obj[[2]]$rpoint_df
   slope_vals <- rpoint_df$rarefied_slope
-  intercept_vals <- rpoint_df$predicted_n_taxa - rpoint_df$rarefied_reads * rpoint_df$rarefied_slope
+  intercept_vals <- rpoint_df$rarefied_pred_n_taxa - rpoint_df$rarefied_reads * rpoint_df$rarefied_slope
 
   # Visualize
   g_rare <- rcurve_df %>%
@@ -273,7 +277,7 @@ plot_rarefy2 <- function (ps_obj,
   # Add rarefied points
   if (plot_rarefied_point) {
     g_rare <- g_rare +
-      ggplot2::geom_point(data = rpoint_df, ggplot2::aes(x = rarefied_reads, y = predicted_n_taxa),
+      ggplot2::geom_point(data = rpoint_df, ggplot2::aes(x = rarefied_reads, y = rarefied_pred_n_taxa),
                           color = "gray30", alpha = 0.6)
   }
 

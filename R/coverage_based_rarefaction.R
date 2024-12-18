@@ -211,6 +211,7 @@ rarefy_even_coverage <-  function(ps_obj,
                   original_coverage = inext_max_sc,
                   rarefied_reads = phyloseq::sample_sums(ps_rare),
                   rarefied_n_taxa = rowSums(phyloseq::otu_table(ps_rare) > 0),
+                  rarefied_pred_n_taxa = rrlist %>% purrr::pmap(function(x,y) suppressWarnings(vegan::rarefy(x, y))) %>% unlist,
                   rarefied_coverage = NA,
                   correct_singletons = correct_singletons)
   phyloseq::sample_data(ps_rare)[rarefy_id,"rarefied_coverage"] <- inext_coverage
@@ -254,7 +255,8 @@ rarefy_even_coverage <-  function(ps_obj,
 #' @importFrom magrittr %>%
 #' @param ps_obj Phyloseq object.
 #' @param plot_rarefied_point Logical. Specify whether rarefied reads are plotted.
-#' @param ran_seed Numeric. Random seed.
+#' @param plot_slope Logical. Specify whether tangent lines are plotted.
+#' @param linetype Numeric or character. Specify the line type of the tangent lines.
 #' @return ggplot object (`g_rare`). User may further edit the figure using `ggplot2`.
 #' @export
 #' @examples
@@ -262,7 +264,8 @@ rarefy_even_coverage <-  function(ps_obj,
 plot_rarefy <- function (ps_obj,
                          plot_rarefied_point = TRUE,
                          #se = FALSE,
-                         ran_seed = 1234) {
+                         plot_slope = FALSE,
+                         linetype = 1) {
   # Extract iNEXT result
   inext_res <- sapply(ps_obj[[2]], `[`, 2)
   names(inext_res) <- phyloseq::sample_names(ps_obj[[1]])
@@ -276,7 +279,7 @@ plot_rarefy <- function (ps_obj,
   # Compile rarefied data
   rare_df2 <- data.frame(phyloseq::sample_data(ps_obj[[1]]))
   colnames(rare_df2)[which(colnames(rare_df2) == "rarefied_reads")] <- "x"
-  colnames(rare_df2)[which(colnames(rare_df2) == "rarefied_n_taxa")] <- "y"
+  colnames(rare_df2)[which(colnames(rare_df2) == "rarefied_pred_n_taxa")] <- "y"
   #dplyr::rename(x = rarefied_reads, y = rarefied_n_taxa)
   rare_df2$rarefied_slope <- 1 - rare_df2$rarefied_coverage
   rare_df2$sample <- rownames(rare_df2)
@@ -294,12 +297,17 @@ plot_rarefy <- function (ps_obj,
     # Add rarefied information
     g_rare <- g_rare +
       ggplot2::geom_point(data = rare_df2,
-                          ggplot2::aes_string(x = "x", y = "y", color = "sample"),
-                          size = 3, shape = 18) +
-      ggplot2::geom_abline(slope = rare_df2_slope,
-                           intercept = rare_df2_intercept,
-                           linetype = 3, size = 0.5, alpha = 0.8) +
+                          ggplot2::aes_string(x = "x", y = "y"),
+                          color = "gray30", size = 3, shape = 18, alpha = 0.6) +
       NULL
+  }
+
+  # Add slopes
+  if (plot_slope) {
+    g_rare <- g_rare +
+      ggplot2::geom_abline(slope = rare_df2_slope,
+                           intercept = rare_df2_intercept, color = "gray60",
+                           linetype = linetype, linewidth = 0.3, alpha = 0.5)
   }
 
   # Return ggplot object

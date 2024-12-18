@@ -4,14 +4,21 @@
 \alias{plot_rarefy}
 \title{Visualize rarefaction curve}
 \usage{
-plot_rarefy(ps_obj, plot_rarefied_point = TRUE, ran_seed = 1234)
+plot_rarefy(
+  ps_obj,
+  plot_rarefied_point = TRUE,
+  plot_slope = FALSE,
+  linetype = 1
+)
 }
 \arguments{
 \item{ps_obj}{Phyloseq object.}
 
 \item{plot_rarefied_point}{Logical. Specify whether rarefied reads are plotted.}
 
-\item{ran_seed}{Numeric. Random seed.}
+\item{plot_slope}{Logical. Specify whether tangent lines are plotted.}
+
+\item{linetype}{Numeric or character. Specify the line type of the tangent lines.}
 }
 \value{
 ggplot object (\code{g_rare}). User may further edit the figure using \code{ggplot2}.
