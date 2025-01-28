@@ -216,7 +216,7 @@ smap_res$rho # rho = 0.434
 smap_res$rmse # rmse = 0.780
 
 # An all-in-one wrapper function
-all_res <- s_map_mdr_all(data_4sp_std, effect_var, theta = 1, tp = 1)
+all_res <- s_map_mdr_all(data_4sp_std, effect_var, theta = 1, tp_range = -12:0)
 ## Note that include_var = "tp0_only" is used in s_map_mdr_all()
 ## Thus, the result is different from the example using step-by-step functions
 ## n_ssr = 100 and k = 10 to speed up the computation
