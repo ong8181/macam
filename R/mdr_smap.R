@@ -427,7 +427,7 @@ s_map_mdr <- function(block_mvd,
 #' @description \code{s_map_mdr_all} A all-in-one wrapper function for MDR S-map. Detect causality between variables, construct data.frame for multiview embedding, compute multiview distance, and perform MDR S-map. For fine-tuning, use the step-by-step functions such as `compute_mvd()` etc..
 #' @param block Data.frame contains time series data. The first column should be the target column.
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
-#' @param lib Numeric vector. Library indices.
+#' @param lib Numeric vector. Library indices. If `NULL`, `c(1, nrow(block_mvd))` will be used as `lib`.
 #' @param pred Numeric vector. Prediction indices.
 #' @param tp Numeric. Forecasting time ahead.
 #' @param E_range Numeric. Embedding dimensions that will be tested.
@@ -446,7 +446,7 @@ s_map_mdr <- function(block_mvd,
 #' @export
 s_map_mdr_all <- function (block,
                            effect_var,
-                           lib = c(1, nrow(block)),
+                           lib = NULL,
                            pred = lib,
                            tp = 1,
                            E_range = 0:10,
@@ -477,6 +477,12 @@ s_map_mdr_all <- function (block,
                                 make_block_max_lag = Ex,
                                 n_ssr = n_ssr, k = k,
                                 tp = tp, random_seed = random_seed)
+
+  # Use "c(1, nrow(block_mvd))" as "lib" if "lib" is not specified
+  if (is.null(lib)) {
+    lib <- c(1, nrow(block_mvd))
+    pred <- lib
+  }
 
   # Step. 5: Do MDR S-map
   mdr_res <- s_map_mdr(block_mvd,

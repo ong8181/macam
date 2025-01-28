@@ -7,7 +7,7 @@
 s_map_mdr_all(
   block,
   effect_var,
-  lib = c(1, nrow(block)),
+  lib = NULL,
   pred = lib,
   tp = 1,
   E_range = 0:10,
@@ -29,7 +29,7 @@ s_map_mdr_all(
 
 \item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
 
-\item{lib}{Numeric vector. Library indices.}
+\item{lib}{Numeric vector. Library indices. If \code{NULL}, \code{c(1, nrow(block_mvd))} will be used as \code{lib}.}
 
 \item{pred}{Numeric vector. Prediction indices.}
 
