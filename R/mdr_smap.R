@@ -315,13 +315,13 @@ compute_mvd <- function (block_mvd, effect_var, E,
                                            silent = TRUE,
                                            target_column = 1)
     } else if (simplex_func == "custom") {
-      ## Perform simplex projection using rEDM::block_lnlp()
-      rand_embed_res_i_tmp <- extended_lnlp(block_mvd[,embedding_idx_i],
-                                            lib = lib,
-                                            pred = pred,
-                                            tp = tp,
-                                            method = "simplex",
-                                            target_column = 1)
+      ## Perform simplex projection using macam::extended_lnlp()
+      rand_embed_res_i_tmp <- macam::extended_lnlp(block_mvd[,embedding_idx_i],
+                                                   lib = lib,
+                                                   pred = pred,
+                                                   tp = tp,
+                                                   method = "simplex",
+                                                   target_column = 1)
       rand_embed_res_i <- data.frame(embedding = NA,
                                      tp = tp,
                                      nn = length(embedding_idx_i) + 1,
