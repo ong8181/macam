@@ -178,7 +178,7 @@ y1_ridge$stats$rmse; y1_lasso$stats$rmse
 library(rEDM)
 packageVersion("rEDM") # v0.7.5
 library(rUIC)
-packageVersion("rUIC") # v0.9.14
+packageVersion("rUIC") # v0.9.15
 
 # Load data
 data(data_4sp)
