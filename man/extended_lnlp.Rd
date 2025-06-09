@@ -14,6 +14,7 @@ extended_lnlp(
   num_neighbors = NCOL(block_time) + 1,
   theta = 0,
   dist_w = NULL,
+  method = "s-map",
   regularized = FALSE,
   lambda = NULL,
   alpha = 0,
@@ -40,6 +41,8 @@ extended_lnlp(
 \item{theta}{Numeric. Weighing function for S-map.}
 
 \item{dist_w}{Matrix. Distance matrix used to calculate weights for S-map. Implemented for MDR S-map (Chang et al. 2021) Ecology Letters. If \code{NULL}, then weights are calculated based on Euclidean distance.}
+
+\item{method}{Character. \code{s-map} or \code{simplex}.}
 
 \item{regularized}{Logical If \code{TRUE}, regularized S-map will be performed. If \code{FALSE}, the normal S-map will be performed. Please use \code{rEDM::s_map} function.}
 

@@ -200,6 +200,9 @@ block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, E_effect_var = Ex
 # Step. 4: Compute multiview distance
 multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
 
+# If you do not want to use rEDM package, use the following code
+#multiview_dist <- compute_mvd(block_mvd, effect_var, simplex_func = "custom", E = Ex, tp = 1)
+
 # Step. 5: Do MDR S-map
 mdr_res <- s_map_mdr(block_mvd,
                      dist_w = multiview_dist,

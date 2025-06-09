@@ -9,6 +9,7 @@
 #' @param num_neighbors Numeric. The number of nearest neighbors.
 #' @param theta Numeric. Weighing function for S-map.
 #' @param dist_w Matrix. Distance matrix used to calculate weights for S-map. Implemented for MDR S-map (Chang et al. 2021) Ecology Letters. If `NULL`, then weights are calculated based on Euclidean distance.
+#' @param method Character. `s-map` or `simplex`.
 #' @param regularized Logical If `TRUE`, regularized S-map will be performed. If `FALSE`, the normal S-map will be performed. Please use `rEDM::s_map` function.
 #' @param lambda Numeric. Specify the strength of penalty in the regularization.
 #' @param alpha Numeric. `alpha = 0` is the ridge regression, `alpha = 1` is the lasso regression, and `0 < alpha < 1` is an elastic net.
@@ -38,7 +39,7 @@ extended_lnlp <- function(block_time,
                           num_neighbors = NCOL(block_time) + 1,
                           theta = 0,
                           dist_w = NULL,
-                          #method = "s-map", # currently "simplex" option cannot be used
+                          method = "s-map", # or "simplex"
                           regularized = FALSE,
                           lambda = NULL,
                           alpha = 0, # default is the ridge regression. If alpha = 1, then do lasso regression
@@ -49,7 +50,6 @@ extended_lnlp <- function(block_time,
 {
   # do multivariate prediction using s-map
   # theta = relative weighting of neighbors based on Euclidean distance in a state space
-  method = "s-map"
   #no_parallel = glmnet_parallel
 
   if(!is.matrix(block_time)) block_time <- as.matrix(block_time)
@@ -81,7 +81,18 @@ extended_lnlp <- function(block_time,
   target[1:(n-tp)] <- block_time[(1+tp):n, target_column]
 
   if(method == "simplex"){
-    stop("\"simplex\" option cannot be used in this version.")
+    simp_out <- extended_simplex(vectors,
+                                 target,
+                                 lib_indices,
+                                 pred_indices,
+                                 num_neighbors)
+    pred_df <- data.frame(time = 1:nrow(vectors),
+                          obs = c(rep(NaN, tp), utils::head(target, n = n - tp)),
+                          pred = c(rep(NaN, tp), utils::head(simp_out$pred, n = n - tp)))
+    stats <- simp_out$stats
+
+    # Return results
+    return(list(model_output = pred_df, stats = stats))
 
   }else if(method == "s-map" |method == "s_map" |method == "smap"){
     smap_out <- extended_smap(vectors, target,

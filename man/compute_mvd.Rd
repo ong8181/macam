@@ -15,6 +15,7 @@ compute_mvd(
   make_block_max_lag = E,
   n_ssr = 10000,
   k = floor(sqrt(n_ssr)),
+  simplex_func = "rEDM_v0.7.5",
   random_seed = 1234,
   distance_only = TRUE,
   silent = FALSE
@@ -40,6 +41,8 @@ compute_mvd(
 \item{n_ssr}{Numeric. The total number of embeddings examined.}
 
 \item{k}{Numeric. The number of embeddings used to calculate ensemble distance.}
+
+\item{simplex_func}{Character. If \code{rEDM_v0.7.5} (default), \code{rEDM::block_lnlp()} is used to calculate the forecasting skill to rank embeddings. If \code{custom}, \code{extended_lnlp()} is used. Installation of \code{rEDM} package is not necessary if \code{extended_lnlp()} is used, but the computation speed may be slower.}
 
 \item{random_seed}{Numeric. Random seed.}
 

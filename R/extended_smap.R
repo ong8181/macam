@@ -1,4 +1,4 @@
-#' @title A core function of regularized S-map
+#' @title A custom function for the regularized S-map
 #' @description \code{extended_smap} performs the regularized S-map introduced in Censi et al. (2019) Methods in Ecology and Evolution.
 #' @param vectors Original time series vector.
 #' @param target Target vector.

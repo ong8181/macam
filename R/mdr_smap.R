@@ -219,6 +219,7 @@ make_block_mvd <- function (block,
 #' @param make_block_max_lag Numeric. `max_lag` in `rEDM::make_block()`. This argument will be used only if `make_block_method = "rEDM"`.
 #' @param n_ssr Numeric. The total number of embeddings examined.
 #' @param k Numeric. The number of embeddings used to calculate ensemble distance.
+#' @param simplex_func Character. If `rEDM_v0.7.5` (default), `rEDM::block_lnlp()` is used to calculate the forecasting skill to rank embeddings. If `custom`, `extended_lnlp()` is used. Installation of `rEDM` package is not necessary if `extended_lnlp()` is used, but the computation speed may be slower.
 #' @param random_seed Numeric. Random seed.
 #' @param distance_only Logical. if `TRUE`, only distance matrix is returned.
 #' @param silent Logical. if `TRUE`, progress message will not be shown.
@@ -234,7 +235,9 @@ compute_mvd <- function (block_mvd, effect_var, E,
                          pred = lib,
                          make_block_method = "naive", # "rEDM"
                          make_block_max_lag = E,
-                         n_ssr = 10000, k = floor(sqrt(n_ssr)),
+                         n_ssr = 10000,
+                         k = floor(sqrt(n_ssr)),
+                         simplex_func = "rEDM_v0.7.5", # Or "custom"
                          random_seed = 1234,
                          distance_only = TRUE,
                          silent = FALSE) {
@@ -248,7 +251,6 @@ compute_mvd <- function (block_mvd, effect_var, E,
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
   if (colnames(block_mvd)[1] != sprintf("%s_tp0", effect_var)) stop("The first column should be the target variable with tp = 0!")
   if (!(make_block_method %in% c("naive", "rEDM"))) stop("\"make_block_method\" should be \"naive\" or \"rEDM\".")
-
 
   # ---------------------------------------------------- #
   # Generate an embedding list
@@ -302,14 +304,33 @@ compute_mvd <- function (block_mvd, effect_var, E,
   for (i in 1:nrow_res) {
     ## Choose embedding ids (id = 1 is always a target column)
     embedding_idx_i <- embedding_list[i,]
-    ## Perform simplex projection
-    rand_embed_res_i <- rEDM::block_lnlp(block_mvd[,embedding_idx_i],
-                                         lib = lib,
-                                         pred = pred,
-                                         method = "simplex",
-                                         silent = TRUE,
-                                         tp = tp,
-                                         target_column = 1)
+
+    if(simplex_func == "rEDM_v0.7.5") {
+      ## Perform simplex projection using rEDM::block_lnlp()
+      rand_embed_res_i <- rEDM::block_lnlp(block_mvd[,embedding_idx_i],
+                                           lib = lib,
+                                           pred = pred,
+                                           tp = tp,
+                                           method = "simplex",
+                                           silent = TRUE,
+                                           target_column = 1)
+    } else if (simplex_func == "custom") {
+      ## Perform simplex projection using rEDM::block_lnlp()
+      rand_embed_res_i_tmp <- extended_lnlp(block_mvd[,embedding_idx_i],
+                                            lib = lib,
+                                            pred = pred,
+                                            tp = tp,
+                                            method = "simplex",
+                                            target_column = 1)
+      rand_embed_res_i <- data.frame(embedding = NA,
+                                     tp = tp,
+                                     nn = length(embedding_idx_i) + 1,
+                                     num_pred = rand_embed_res_i_tmp$stats$N,
+                                     rho = rand_embed_res_i_tmp$stats$rho,
+                                     mae = rand_embed_res_i_tmp$stats$mae,
+                                     rmse = rand_embed_res_i_tmp$stats$rmse)
+    }
+
     # Add information
     rand_embed_res_i$embedding <- stringr::str_sub(stringr::str_c(embedding_idx_i, ",", collapse = " "), end = -2)
     # Merge results

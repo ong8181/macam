@@ -1,7 +1,7 @@
 Package: macam
 Type: Package
 Title: A collection of miscellaneous R functions for ecology
-Version: 0.1.10
+Version: 0.2.0
 Author: Masayuki Ushio
 Maintainer: Masayuki Ushio <ong8181@gmail.com>
 Description: This package contains a collection of miscellaneous functions for ecology.
