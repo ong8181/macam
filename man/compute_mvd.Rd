@@ -7,7 +7,7 @@
 compute_mvd(
   block_mvd,
   effect_var,
-  E,
+  E = 3,
   tp = 1,
   lib = c(1, nrow(block_mvd)),
   pred = lib,
@@ -26,7 +26,7 @@ compute_mvd(
 
 \item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
 
-\item{E}{Numeric. Optimal embedding dimension of \code{effect_var}}
+\item{E}{Numeric. The embedding dimension to use for time delay embedding to calculate the multiview distance. \code{compute_mvd()} calculates the multiview distance based on many embeddings with \code{E} dimensions.}
 
 \item{tp}{Numeric. Forecasting time ahead.}
 

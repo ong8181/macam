@@ -1,7 +1,7 @@
 Package: macam
 Type: Package
 Title: A collection of miscellaneous R functions for ecology
-Version: 0.2.1
+Version: 0.2.2
 Author: Masayuki Ushio
 Maintainer: Masayuki Ushio <ong8181@gmail.com>
 Description: This package contains a collection of miscellaneous functions for ecology.
@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     Biostrings,
     dplyr,

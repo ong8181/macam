@@ -195,10 +195,10 @@ simp_x <- rUIC::simplex(data_4sp_std, lib_var = effect_var, E = 0:10, tp = 1)
 uic_res <- uic_across(data_4sp_std, effect_var, E_range = 0:10, tp_range = -12:0, silent = TRUE)
 
 # Step 3: Make block to calculate multiview distance
-block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, E_effect_var = Ex, include_var = "all_significant", p_threshold = 0.05)
+block_mvd <- make_block_mvd(data_4sp_std, uic_res, effect_var, max_lag = 1, include_var = "all_significant", p_threshold = 0.05)
 
-# Step. 4: Compute multiview distance
-multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex, tp = 1)
+# Step. 4: Compute multiview distance based on embeddings with 3 dimensions
+multiview_dist <- compute_mvd(block_mvd, effect_var, E = 3, tp = 1)
 
 # If you do not want to use rEDM package, use the following code
 #multiview_dist <- compute_mvd(block_mvd, effect_var, simplex_func = "custom", E = Ex, tp = 1)
@@ -210,7 +210,7 @@ mdr_res <- s_map_mdr(block_mvd,
                      tp = 1,
                      regularized = FALSE,
                      save_smap_coefficients = TRUE)
-mdr_res$stats # rho = 0.498; rmse = 0.760
+mdr_res$stats # rho = 0.476; rmse = 0.770
 
 # Compare with the normal S-map
 smap_res <- rEDM::block_lnlp(data_4sp_std, target_column = effect_var,

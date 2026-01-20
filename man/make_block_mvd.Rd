@@ -8,7 +8,7 @@ make_block_mvd(
   block,
   uic_res,
   effect_var,
-  E_effect_var,
+  max_lag = 0,
   cause_var_colname = "cause_var",
   th_var_colname = "pval",
   p_threshold = 0.05,
@@ -25,7 +25,7 @@ make_block_mvd(
 
 \item{effect_var}{Character or Numeric. Column name or index of the effect variable.}
 
-\item{E_effect_var}{Numeric. Optimal embedding dimension of the effect variable.}
+\item{max_lag}{Numeric. The total number of lags to include for the effect variable. So if max_lag = 3, a variable X will appear with lags \verb{\{X[t], X[t-1], X[t-2]\}}. This argument was previously \code{E_effect_var}, but renamed to clarify its meaning.}
 
 \item{cause_var_colname}{Character. A column name for causal variables in \code{uic_res}.}
 

@@ -84,7 +84,7 @@ uic_across <- function(block,
 #' @param block Data.frame contains time series data.
 #' @param uic_res Data.frame contains UIC results. Usually this is the output of `uic_across()`, but custom data.frame may be usable.
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
-#' @param E_effect_var Numeric. Optimal embedding dimension of the effect variable.
+#' @param max_lag Numeric. The total number of lags to include for the effect variable. So if max_lag = 3, a variable X will appear with lags `{X[t], X[t-1], X[t-2]}`. This argument was previously `E_effect_var`, but renamed to clarify its meaning.
 #' @param cause_var_colname Character. A column name for causal variables in `uic_res`.
 #' @param th_var_colname Character. A column name for a threshold to choose causal variables in `uic_res`.
 #' @param include_var Character. `all_significant`, `strongest_only`, or `tp0_only`. If `all_significant`, all significantly influencing variables are used for the embedding. If `strongest_only`, tp with the strongest influence for each variable is used. If `tp0_only`, only variables with no time-delay are used.
@@ -97,7 +97,7 @@ uic_across <- function(block,
 make_block_mvd <- function (block,
                             uic_res,
                             effect_var,
-                            E_effect_var,
+                            max_lag = 0,
                             cause_var_colname = "cause_var",
                             th_var_colname = "pval",
                             p_threshold = 0.050,
@@ -107,6 +107,9 @@ make_block_mvd <- function (block,
                             silent = FALSE) {
   # Retrieve colnames
   x_names <- colnames(block)
+
+  # Message about the recent update
+  message("\033[31m", "Update in v0.2.2:", "\033[0m", "`E_effect_var` is renamed to `max_lag` to clarify its meaning. Lagged coordinates of the effect variables can be included or omitted in `block_mvd`.")
 
   # Check colnames to be used (and critical) in the analysis
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
@@ -121,15 +124,15 @@ make_block_mvd <- function (block,
   if (!is.data.frame(block)) stop("\"block\" should be data.frame.")
   if (!is.numeric(p_threshold)) stop("\"p_threshold\" should be numeric.")
   if (!include_var %in% c("all_significant", "strongest_only", "tp0_only")) stop("\"include_var\" should be \"all_significant\", \"strongest_only\", or \"tp0_only\".")
-  if (E_effect_var < 1) stop("\"max_delay_self\" should be >= 1.")
+  if (max_lag < 1) stop("\"max_lag\" should be >= 1.")
 
   # Preparation
   if (include_var == "tp0_only") {
     block_mvd <- data.frame(block[,effect_var])
     colnames(block_mvd) <- sprintf("%s_tp0", effect_var)
   } else {
-    block_mvd <- data.frame(make_block(block[,effect_var], max_lag = E_effect_var)[,-1])
-    colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(E_effect_var-1)))
+    block_mvd <- data.frame(make_block(block[,effect_var], max_lag = max_lag)[,-1])
+    colnames(block_mvd) <- sprintf("%s_tp%s", effect_var, 0:(-(max_lag-1)))
   }
   # Pre-screening (typically, p & tp)
   if (!silent) message(sprintf("UIC results with `tp` <= 0 and `pval` <= %s are kept for further analyses.", p_threshold))
@@ -211,7 +214,7 @@ make_block_mvd <- function (block,
 #' @description \code{compute_mvd} Compute multiview distance
 #' @param block_mvd Data.frame contains time series data. The first column should be the target column.
 #' @param effect_var Character or Numeric. Column name or index of the effect variable.
-#' @param E Numeric. Optimal embedding dimension of `effect_var`
+#' @param E Numeric. The embedding dimension to use for time delay embedding to calculate the multiview distance. `compute_mvd()` calculates the multiview distance based on many embeddings with `E` dimensions.
 #' @param tp Numeric. Forecasting time ahead.
 #' @param lib Numeric vector. Library indices.
 #' @param pred Numeric vector. Prediction indices.
@@ -229,7 +232,9 @@ make_block_mvd <- function (block,
 #'  \item{Chang et al. (2021) Ecology Letters. https://doi.org/10.1111/ele.13897}
 #' }
 #' @export
-compute_mvd <- function (block_mvd, effect_var, E,
+compute_mvd <- function (block_mvd,
+                         effect_var,
+                         E = 3,
                          tp = 1,
                          lib = c(1, nrow(block_mvd)),
                          pred = lib,
@@ -409,11 +414,14 @@ compute_mvd <- function (block_mvd, effect_var, E,
 #' @export
 s_map_mdr <- function(block_mvd,
                       dist_w,
-                      lib = c(1, nrow(block_mvd)), pred = lib,
-                      tp = 1, theta = 8,
+                      lib = c(1, nrow(block_mvd)),
+                      pred = lib,
+                      tp = 1,
+                      theta = 8,
                       weight_method = "sqrt",
                       regularized = FALSE,
-                      lambda = 0, alpha = 0,
+                      lambda = 0,
+                      alpha = 0,
                       glmnet_parallel = FALSE,
                       save_smap_coefficients = FALSE,
                       random_seed = 1234) {
@@ -490,12 +498,13 @@ s_map_mdr_all <- function (block,
   uic_res <- uic_across(block, effect_var, E_range = E_range, tp_range = tp_range, silent = silent)
 
   # Step 3: Make block to calculate multiview distance
-  block_mvd <- make_block_mvd(block, uic_res, effect_var, E_effect_var = Ex, include_var = "tp0_only")
+  block_mvd <- make_block_mvd(block, uic_res, effect_var, max_lag = 1, include_var = "tp0_only")
 
   # Step. 4: Compute multiview distance
-  multiview_dist <- compute_mvd(block_mvd, effect_var, E = Ex,
+  multiview_dist <- compute_mvd(block_mvd, effect_var,
+                                E = 3,
                                 make_block_method = "rEDM",
-                                make_block_max_lag = Ex,
+                                make_block_max_lag = 3,
                                 n_ssr = n_ssr, k = k,
                                 tp = tp, random_seed = random_seed)
 
