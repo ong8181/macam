@@ -97,7 +97,7 @@ uic_across <- function(block,
 make_block_mvd <- function (block,
                             uic_res,
                             effect_var,
-                            max_lag = 0,
+                            max_lag = 1,
                             cause_var_colname = "cause_var",
                             th_var_colname = "pval",
                             p_threshold = 0.050,
@@ -109,7 +109,7 @@ make_block_mvd <- function (block,
   x_names <- colnames(block)
 
   # Message about the recent update
-  message("\033[31m", "Update in v0.2.2:", "\033[0m", "`E_effect_var` is renamed to `max_lag` to clarify its meaning. Lagged coordinates of the effect variables can be included or omitted in `block_mvd`.")
+  message("\033[31m", "Update in v0.2.2: `E_effect_var` is renamed to `max_lag` to clarify its meaning (the default value = 1). ", "\033[0m", "Lagged coordinates of the effect variables can be included or omitted in `block_mvd`.")
 
   # Check colnames to be used (and critical) in the analysis
   if (is.numeric(effect_var)) effect_var <- x_names[effect_var]
@@ -246,6 +246,9 @@ compute_mvd <- function (block_mvd,
                          random_seed = 1234,
                          distance_only = TRUE,
                          silent = FALSE) {
+  # Message about the recent update
+  message("\033[31m", "Update in v0.2.2: The default `E` and `make_block_max_lag` is changed to 3. ", "\033[0m", "`E` is the embedding dimension used for time delay embedding to calculate the multiview distance.")
+
   # Set random seed
   set.seed(random_seed)
   # Retrieve colnames

@@ -8,7 +8,7 @@ make_block_mvd(
   block,
   uic_res,
   effect_var,
-  max_lag = 0,
+  max_lag = 1,
   cause_var_colname = "cause_var",
   th_var_colname = "pval",
   p_threshold = 0.05,
