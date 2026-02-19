@@ -287,7 +287,7 @@ compute_mvd <- function (block_mvd,
       # Randomly select embeddings
       emb_list0 <- matrix(0, nrow = 1, ncol = E-1); i <- 1
       while (nrow(emb_list0) < n_ssr + 1) {
-        i <- i + 1; set.seed(random_seed + i)
+        i <- i + 1
         emb_list0_tmp <- matrix(sort(sample(valid_idx, E-1, replace = FALSE)), nrow = 1)
         emb_dif <- t(t(emb_list0) - c(emb_list0_tmp)) # Subtract a vector from matrix
         if(all(!apply(emb_dif == 0, 1, all))) emb_list0 <- rbind(emb_list0, emb_list0_tmp)
@@ -430,8 +430,13 @@ s_map_mdr <- function(block_mvd,
                       random_seed = 1234) {
   # Check input
   if (!(nrow(block_mvd) == nrow(dist_w))) stop(" \"dist_w\" should have the same size with \"block_mvd\"")
-  if (!is.null(weight_method) & weight_method != "sqrt") stop("Specify the valid option for \"weight_method\": NULL or \"sqrt\"")
-  if (weight_method == "sqrt") dist_w = sqrt(dist_w)
+  if (is.null(weight_method)) {
+    dist_w = dist_w
+  } else if(weight_method == "sqrt") {
+    dist_w = sqrt(dist_w)
+  } else {
+    stop("Specify the valid option for \"weight_method\": NULL or \"sqrt\"")
+  }
 
   # ---------------------------------------------------- #
   # Perform MDR S-map using macam::extended_lnlp
