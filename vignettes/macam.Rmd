@@ -109,7 +109,7 @@ plot_rarefy(ps_rare_raw) +
 ps_rare_raw2 <- rarefy_even_coverage2(ps_sample,
                                      coverage = 0.97,
                                      include_rarecurve_results = TRUE,
-                                     knots = 3000,
+                                     coverage_diff_th = 0.0001,
                                      rareplot_step_size = 100)
 ps_rare2 <- ps_rare_raw2[[1]] # Extract phyloseq object
 sample_sums(ps_rare2)

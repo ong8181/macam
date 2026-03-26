@@ -58,7 +58,7 @@ rarefy_even_coverage2 <- function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
                                   include_rarecurve_results = FALSE,
-                                  coverage_diff_th = 0.001,
+                                  coverage_diff_th = 0.0001,
                                   n_rarefy_iter = 10,
                                   rareplot_step_size = 100,
                                   rarefy_average_method = "round",
@@ -95,7 +95,6 @@ rarefy_even_coverage2 <- function(ps_obj,
   }
 
   # Calculate slope
-  #rare_knots <- knots # knots for slope check
   rareslopelist <- list()
   # Specify coverage
   cvr <- 1 - coverage # Rename the object
@@ -110,25 +109,29 @@ rarefy_even_coverage2 <- function(ps_obj,
                                      slope = suppressWarnings(vegan::rareslope(com_mat[i,], start_reads)))
     rareslopelist[[i]]$cvr_abs_diff <- abs(rareslopelist[[i]]$slope - cvr)
 
-    # Identify a new threshold read number
-    b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
-
-    # Loop to identify the best n_reads
-    while(rareslopelist[[i]]$cvr_abs_diff[b_ids[2]] > coverage_diff_th) {
-      # Create a new set of reads
-      new_reads <- c(rareslopelist[[i]]$n_reads[b_ids][1],
-                     round(mean(rareslopelist[[i]]$n_reads[b_ids])),
-                     rareslopelist[[i]]$n_reads[b_ids][2])
-      rareslopelist_tmp <- data.frame(n_reads = new_reads[2],
-                                      slope = suppressWarnings(vegan::rareslope(com_mat[i,], new_reads[2])))
-      rareslopelist_tmp$cvr_abs_diff <-  abs(rareslopelist_tmp$slope - cvr)
-
-      # Combine and sort rareslopelist[[i]]
-      rareslopelist[[i]] <- rbind(rareslopelist[[i]], rareslopelist_tmp) %>%
-        dplyr::arrange(n_reads)
-
-      # Create a new b_ids
+    # Check if the maximum coverage is over "coverage"
+    if (rareslopelist[[i]]$slope[3] < cvr) {
+      # Identify a new threshold read number
       b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
+
+      # Loop to identify the best n_reads
+      while((rareslopelist[[i]]$cvr_abs_diff[b_ids[2]] > coverage_diff_th) |
+            (rareslopelist[[i]]$n_reads[b_ids][2] - rareslopelist[[i]]$n_reads[b_ids][1] != 1)) {
+        # Create a new set of reads
+        new_reads <- c(rareslopelist[[i]]$n_reads[b_ids][1],
+                       round(mean(rareslopelist[[i]]$n_reads[b_ids])),
+                       rareslopelist[[i]]$n_reads[b_ids][2])
+        rareslopelist_tmp <- data.frame(n_reads = new_reads[2],
+                                        slope = suppressWarnings(vegan::rareslope(com_mat[i,], new_reads[2])))
+        rareslopelist_tmp$cvr_abs_diff <-  abs(rareslopelist_tmp$slope - cvr)
+
+        # Combine and sort rareslopelist[[i]]
+        rareslopelist[[i]] <- rbind(rareslopelist[[i]], rareslopelist_tmp) %>%
+          dplyr::arrange(n_reads)
+
+        # Create a new b_ids
+        b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
+      }
     }
   }
 

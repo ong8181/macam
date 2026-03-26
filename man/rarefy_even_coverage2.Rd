@@ -9,7 +9,7 @@ rarefy_even_coverage2(
   coverage = 0.97,
   remove_not_rarefied = FALSE,
   include_rarecurve_results = FALSE,
-  coverage_diff_th = 0.001,
+  coverage_diff_th = 1e-04,
   n_rarefy_iter = 10,
   rareplot_step_size = 100,
   rarefy_average_method = "round",
