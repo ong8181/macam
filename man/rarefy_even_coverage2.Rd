@@ -9,7 +9,7 @@ rarefy_even_coverage2(
   coverage = 0.97,
   remove_not_rarefied = FALSE,
   include_rarecurve_results = FALSE,
-  knots = 1000,
+  coverage_diff_th = 0.001,
   n_rarefy_iter = 10,
   rareplot_step_size = 100,
   rarefy_average_method = "round",
@@ -25,7 +25,7 @@ rarefy_even_coverage2(
 
 \item{include_rarecurve_results}{Logical. If TURE, \code{rarecurve} results will also be included for visualization. The first object is a rarefied phyloseq object, and the second object is \code{rarecurve} results. If \code{FALSE}, it returns a rarefied phyloseq object only.}
 
-\item{knots}{Numeric. Specify \code{knots} of \code{rareslope} function.}
+\item{coverage_diff_th}{Numeric. Specify acceptable coverage deviation (rarefied coverage - \code{coverage} < \code{coverage_diff_th}).}
 
 \item{n_rarefy_iter}{Numeric. The number of iterations of rarefactions (default = 1).}
 

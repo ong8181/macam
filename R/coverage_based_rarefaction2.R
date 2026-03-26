@@ -45,7 +45,7 @@ coverage_info2 <- function (ps_obj) {
 #' @param coverage Numeric. Coverage specified by a user (default = 0.97 = 97%).
 #' @param remove_not_rarefied Logical. If `TRUE`, samples of which coverage is lower than the specified coverage will be removed.
 #' @param include_rarecurve_results Logical. If TURE, `rarecurve` results will also be included for visualization. The first object is a rarefied phyloseq object, and the second object is `rarecurve` results. If `FALSE`, it returns a rarefied phyloseq object only.
-#' @param knots Numeric. Specify `knots` of `rareslope` function.
+#' @param coverage_diff_th Numeric. Specify acceptable coverage deviation (rarefied coverage - `coverage` < `coverage_diff_th`).
 #' @param n_rarefy_iter Numeric. The number of iterations of rarefactions (default = 1).
 #' @param rarefy_average_method  Character. If `n_rarefy_iter` >= 2, this argument determines how the multiple rarefactions are summarized. r`arefy_average_method = "round"` uses `round()`. `rarefy_average_method = "floor"` uses `floor()`. `rarefy_average_method = "ceiling"` uses `ceiling()`.
 #' @param rareplot_step_size  Numeric. Step size for `rarecurve` function. Only affect the resolution of a rarefaction plot.
@@ -58,7 +58,7 @@ rarefy_even_coverage2 <- function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
                                   include_rarecurve_results = FALSE,
-                                  knots = 1000,
+                                  coverage_diff_th = 0.001,
                                   n_rarefy_iter = 10,
                                   rareplot_step_size = 100,
                                   rarefy_average_method = "round",
@@ -95,19 +95,43 @@ rarefy_even_coverage2 <- function(ps_obj,
   }
 
   # Calculate slope
-  rare_knots <- knots # knots for slope check
-  rareslopelist<-list()
-  for(i in 1:nrow(com_mat)){
-    rare_p <- round(seq(1, sum(com_mat[i,]) - 1, length.out = rare_knots))
-    rareslopelist[[i]] <- data.frame(n_reads = rare_p,
-                                     slope = suppressWarnings(vegan::rareslope(com_mat[i,], rare_p)))
-    rm(rare_p)
-  }
-
+  #rare_knots <- knots # knots for slope check
+  rareslopelist <- list()
   # Specify coverage
   cvr <- 1 - coverage # Rename the object
   # Identify sequence read number that achieve the coverage
   cvrfun <- function(x) min(which(x$slope < cvr))
+
+  # Main loop to calculate the rarefied depth
+  for(i in 1:nrow(com_mat)){
+    # Calculate the slopes for the start_reads
+    start_reads <- c(1, round(sum(com_mat[i,])/2), sum(com_mat[i,]))
+    rareslopelist[[i]] <- data.frame(n_reads = start_reads,
+                                     slope = suppressWarnings(vegan::rareslope(com_mat[i,], start_reads)))
+    rareslopelist[[i]]$cvr_abs_diff <- abs(rareslopelist[[i]]$slope - cvr)
+
+    # Identify a new threshold read number
+    b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
+
+    # Loop to identify the best n_reads
+    while(rareslopelist[[i]]$cvr_abs_diff[b_ids[2]] > coverage_diff_th) {
+      # Create a new set of reads
+      new_reads <- c(rareslopelist[[i]]$n_reads[b_ids][1],
+                     round(mean(rareslopelist[[i]]$n_reads[b_ids])),
+                     rareslopelist[[i]]$n_reads[b_ids][2])
+      rareslopelist_tmp <- data.frame(n_reads = new_reads[2],
+                                      slope = suppressWarnings(vegan::rareslope(com_mat[i,], new_reads[2])))
+      rareslopelist_tmp$cvr_abs_diff <-  abs(rareslopelist_tmp$slope - cvr)
+
+      # Combine and sort rareslopelist[[i]]
+      rareslopelist[[i]] <- rbind(rareslopelist[[i]], rareslopelist_tmp) %>%
+        dplyr::arrange(n_reads)
+
+      # Create a new b_ids
+      b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
+    }
+  }
+
   cvrrare <- suppressWarnings(unlist(lapply(rareslopelist, cvrfun)))
 
   # Summarize sample information
