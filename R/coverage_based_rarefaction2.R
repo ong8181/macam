@@ -58,7 +58,7 @@ rarefy_even_coverage2 <- function(ps_obj,
                                   coverage = 0.97,
                                   remove_not_rarefied = FALSE,
                                   include_rarecurve_results = FALSE,
-                                  coverage_diff_th = 0.0001,
+                                  coverage_diff_th = 0.001,
                                   n_rarefy_iter = 10,
                                   rareplot_step_size = 100,
                                   rarefy_average_method = "round",
@@ -115,7 +115,7 @@ rarefy_even_coverage2 <- function(ps_obj,
       b_ids <- c(which(rareslopelist[[i]]$slope < cvr)[1]-1, which(rareslopelist[[i]]$slope < cvr)[1])
 
       # Loop to identify the best n_reads
-      while((rareslopelist[[i]]$cvr_abs_diff[b_ids[2]] > coverage_diff_th) |
+      while((rareslopelist[[i]]$cvr_abs_diff[b_ids[2]] > coverage_diff_th) &
             (rareslopelist[[i]]$n_reads[b_ids][2] - rareslopelist[[i]]$n_reads[b_ids][1] != 1)) {
         # Create a new set of reads
         new_reads <- c(rareslopelist[[i]]$n_reads[b_ids][1],

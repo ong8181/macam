@@ -59,7 +59,7 @@ AllOrients("ATGC")
 ### `PrimerHits()`
 see [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html).
 
-### `rarefy_even_coverage()`, `plot_rarefy()`
+### `rarefy_even_coverage()`, `rarefy_even_coverage2()`, `plot_rarefy()`
 ```{r, eval = FALSE}
 # Load library
 library(tidyverse)
