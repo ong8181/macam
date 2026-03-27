@@ -59,7 +59,7 @@ AllOrients("ATGC")
 ### `PrimerHits()`
 see [DADA2 tutrial](https://benjjneb.github.io/dada2/ITS_workflow.html).
 
-### `rarefy_even_coverage()`, `rarefy_even_coverage2()`, `plot_rarefy()`
+### `rarefy_even_coverage()`, `rarefy_even_coverage2()`, and `plot_rarefy()`
 ```{r, eval = FALSE}
 # Load library
 library(tidyverse)
@@ -172,7 +172,8 @@ y1_ridge$stats$rmse; y1_lasso$stats$rmse
 #y1_ridge <- extende_lnlp(block_y1, theta = 0.1, lambda = 0.1,
 #                       regularized = T, alpha = 0, random_seed = 1234)
 ```
-### MDR S-map
+
+### MDR S-map `s_map_mdr()`
 ```{r, eval = FALSE}
 # Load library
 library(rEDM)
