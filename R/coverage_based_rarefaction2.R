@@ -101,8 +101,16 @@ rarefy_even_coverage2 <- function(ps_obj,
 
   # Main loop to calculate the rarefied depth
   for(i in 1:nrow(com_mat)){
+    # Check if the total read number is 1
+    if (sum(com_mat[i,]) == 1) {
+      rareslopelist[[i]] <- data.frame(n_reads = 1, slope = suppressWarnings(vegan::rareslope(com_mat[i,], 0)))
+      rareslopelist[[i]]$cvr_abs_diff <- abs(rareslopelist[[i]]$slope - cvr)
+      rownames(rareslopelist[[i]]) <- "N1"
+      next
+    }
+
     # Calculate the slopes for the start_reads
-    start_reads <- c(1, ceiling(sum(com_mat[i,])/2), sum(com_mat[i,]))
+    start_reads <- c(1, ceiling(sum(com_mat[i,])/2), sum(com_mat[i,])-1)
     rareslopelist[[i]] <- data.frame(n_reads = start_reads,
                                      slope = suppressWarnings(vegan::rareslope(com_mat[i,], start_reads)))
     rareslopelist[[i]]$cvr_abs_diff <- abs(rareslopelist[[i]]$slope - cvr)
@@ -139,7 +147,15 @@ rarefy_even_coverage2 <- function(ps_obj,
   rm(rareslopelist_tmp); rm(new_reads); rm(b_ids)
 
   # Identify sequence read number that achieves the coverage
-  cvrfun <- function(x) min(which(x$cvr_abs_diff < coverage_diff_th))
+  cvrfun <- function(x) {
+    if (min(x$cvr_abs_diff) < coverage_diff_th) {
+      return(which.min(x$cvr_abs_diff))
+    } else if (any(x$slope < cvr)) {
+      return(which(x$slope < cvr)[which.min(x$cvr_abs_diff[x$slope < cvr])])
+    } else {
+      return(Inf)
+    }
+  }
   cvrrare <- suppressWarnings(unlist(lapply(rareslopelist, cvrfun)))
 
   # Summarize sample information
@@ -155,6 +171,9 @@ rarefy_even_coverage2 <- function(ps_obj,
     if (is.finite(cvrrare[i])) {
       cvr_df$n_reads[i] <- rareslopelist[[i]]$n_reads[cvrrare[i]]
       cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads[i]))
+    } else if (rev(rareslopelist[[i]]$n_reads)[1] == 1) {
+      cvr_df$n_reads[i] <- 1
+      cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], 0))
     } else {
       cvr_df$n_reads[i] <- utils::tail(rareslopelist[[i]]$n_reads, n = 1)
       cvr_df$coverage[i] <- 1 - suppressWarnings(vegan::rareslope(com_mat[i,], cvr_df$n_reads[i]))
@@ -230,7 +249,7 @@ rarefy_even_coverage2 <- function(ps_obj,
   }
 
   if (any(!rarefy_id)) {
-    message1 <- sprintf("Following samples were NOT rarefied because of the low coverage: %s\n",
+    message1 <- sprintf("Following samples were NOT rarefied: %s\n",
                         all_names[!rarefy_id] %>% paste(collapse = " "))
   } else {
     message1 <- "All non-zero samples were successfully rarefied!\n"
