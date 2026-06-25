@@ -29,12 +29,14 @@ outdir_create <- function(save_dir_name = TRUE, str_end = 3, suffix = "Out") {
 #' # save_workspace(output_dir)
 save_workspace <- function(workspace_dir, workspace_file_name = NULL) {
   # Create output_dir if it does not exists
-  if (!dir.exists(workspace_dir)) dir.create(workspace_dir)
+  if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
   # Specify workspace file name
-  if (is.null(workspace_file_name)) workspace_file_name <- workspace_dir
+  if (is.null(workspace_file_name)) workspace_file_name <- basename(workspace_dir)
+  # Specify file name
+  out_path <- file.path(workspace_dir, paste0(workspace_file_name, ".RData"))
   # Save workspace
-  save(list = ls(all.names = TRUE),
-     file = paste0(workspace_dir, "/", workspace_file_name, ".RData"))
+  target_objects <- ls(all.names = TRUE, envir = .GlobalEnv)
+  save(list = target_objects, file = out_path, envir = .GlobalEnv)
 }
 
 
@@ -57,7 +59,7 @@ save_session_info <- function(session_info_dir = "00_SessionInfo", create_sessio
   if (!dir.exists(session_info_dir) & create_session_info_dir) {
     dir.create(session_info_dir)
   } else if (dir.exists(session_info_dir) & create_session_info_dir) {
-    message("session_info_dir already exist. The directory is NOT overwrited.")
+    message("session_info_dir already exist. The directory is NOT overwritten.")
   } else if (!dir.exists(session_info_dir) & !create_session_info_dir){
     stop("session_info_dir does not exist. Please create it.")
   }
